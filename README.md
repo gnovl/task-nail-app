@@ -37,4 +37,63 @@ To get started with the project locally, follow these steps:
 
 3. Set up environment variables: Create a .env file in the root directory and add the following:
 
-\`\`\`\`DATABASE_URL="postgresql://postgres:admin1234@localhost:5432/postgres?schema=public" NEXTAUTH_URL=http://localhost:3000\`\`\` 4. Set up the database: You'll need to apply the Prisma migrations to set up your PostgreSQL database schema. Run the following command: \`\`\`npx prisma migrate dev\`\`\` Running the Application To run the application in development mode, use the following command: \`\`\`npm run dev\`\`\` This will start the server on http://localhost:3000. ## Scripts - \`npm run dev\` - Runs the development server - \`npm run build\` - Builds the project for production - \`npm run start\` - Runs the production server - \`npm run lint\` - Lints the codebase for potential errors ## Database This application uses \*\*Prisma\*\* as the ORM and \*\*PostgreSQL\*\* as the database. Ensure that your PostgreSQL instance is running locally or remotely with the appropriate credentials. You can modify the \`DATABASE_URL\` in your \`.env\` file to match your PostgreSQL connection settings. ## Roadmap - Complete responsive design - Add user authentication and authorization - Add due dates and priority levels to tasks - Implement task categories or labels - Add task filtering and search functionality ## Contributing Contributions and feedback are welcome! Feel free to fork the repository and open a pull request. ## Disclaimer This is an early development version of the Task Manager application. Some features might not work as expected, and the UI is not fully responsive yet. ### Key Sections Explained: - \*\*Project Overview:\*\* A simple, high-level overview of the app and its current state. - \*\*Tech Stack:\*\* Lists the key technologies involved in the project. - \*\*Installation Instructions:\*\* Step-by-step guide to help others set it up locally. - \*\*Running the App:\*\* Instructions for running the app in development mode. - \*\*Database:\*\* Information on how to configure and set up the database. - \*\*Roadmap:\*\* Future features and improvements planned for the app. - \*\*Contributing:\*\* Encourages contributions and mentions the development status. Make sure to replace the placeholder repository link (\`https://github.com/gnovl/ez-task-flow-app.git\`) with your actual GitHub repository URL. Let me know if you'd like to make any other changes! \`\`\`\`
+DATABASE_URL="postgresql://postgres:admin1234@localhost:5432/postgres?schema=public"
+NEXTAUTH_URL=http://localhost:3000
+
+4. Set up the database: You'll need to apply the Prisma migrations to set up your PostgreSQL database schema. Run the following command:
+
+`npx prisma migrate dev`
+
+Running the Application
+To run the application in development mode, use the following command:
+
+`npm run dev`
+
+This will start the server on http://localhost:3000.
+
+## Scripts
+
+- `npm run dev` - Runs the development server
+- `npm run build` - Builds the project for production
+- `npm run start` - Runs the production server
+- `npm run lint` - Lints the codebase for potential errors
+
+## Database
+
+This application uses **Prisma** as the ORM and **PostgreSQL** as the database. Ensure that your PostgreSQL instance is running locally or remotely with the appropriate credentials.
+
+You can modify the `DATABASE_URL` in your `.env` file to match your PostgreSQL connection settings.
+
+## Roadmap
+
+- Complete responsive design
+- Add user authentication and authorization
+- Add due dates and priority levels to tasks
+- Implement task categories or labels
+- Add task filtering and search functionality
+
+## Contributing
+
+Contributions and feedback are welcome! Feel free to fork the repository and open a pull request.
+
+## Disclaimer
+
+This is an early development version of the Task Manager application. Some features might not work as expected, and the UI is not fully responsive yet.
+
+### Key Sections Explained:
+
+- **Project Overview:** A simple, high-level overview of the app and its current state.
+- **Tech Stack:** Lists the key technologies involved in the project.
+- **Installation Instructions:** Step-by-step guide to help others set it up locally.
+- **Running the App:** Instructions for running the app in development mode.
+- **Database:** Information on how to configure and set up the database.
+- **Roadmap:** Future features and improvements planned for the app.
+- **Contributing:** Encourages contributions and mentions the development status.
+
+Make sure to replace the placeholder repository link (`https://github.com/gnovl/ez-task-flow-app.git`) with your actual GitHub repository URL.
+
+Let me know if you'd like to make any other changes!
+
+```
+
+```
