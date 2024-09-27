@@ -37,11 +37,11 @@ To get started with the project locally, follow these steps:
 
 3. Set up environment variables: Create a .env file in the root directory and add the following:
 
-- DATABASE_URL="postgresql://postgres:<your-password>@localhost:5432/postgres?schema=public"
+DATABASE_URL="postgresql://postgres:<your-password>@localhost:5432/postgres?schema=public"
 
 Replace `<your-password>` with your actual PostgreSQL admin password.
 
-- NEXTAUTH_URL=http://localhost:3000
+NEXTAUTH_URL=http://localhost:3000
 
 4. Set up the database: You'll need to apply the Prisma migrations to set up your PostgreSQL database schema. Run the following command:
 
