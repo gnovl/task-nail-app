@@ -93,7 +93,3 @@ This is an early development version of the Task Manager application. Some featu
 Make sure to replace the placeholder repository link (`https://github.com/gnovl/ez-task-flow-app.git`) with your actual GitHub repository URL.
 
 Let me know if you'd like to make any other changes!
-
-```
-
-```
