@@ -27,7 +27,7 @@ To get started with the project locally, follow these steps:
 1. **Clone the repository:**
 
    ```bash
-   git clone https://github.com/your-username/task-manager.git
+   git clone https://github.com/gnovl/ez-task-flow-app.git
    cd task-manager
    ```
 
@@ -37,8 +37,10 @@ To get started with the project locally, follow these steps:
 
 3. Set up environment variables: Create a .env file in the root directory and add the following:
 
-DATABASE_URL="postgresql://postgres:admin1234@localhost:5432/postgres?schema=public"
-NEXTAUTH_URL=http://localhost:3000
+DATABASE_URL="postgresql://postgres:<your-password>@localhost:5432/postgres?schema=public"
+
+> Replace <your-password> with your actual PostgreSQL admin password.
+> NEXTAUTH_URL=http://localhost:3000
 
 4. Set up the database: You'll need to apply the Prisma migrations to set up your PostgreSQL database schema. Run the following command:
 
@@ -67,10 +69,8 @@ You can modify the `DATABASE_URL` in your `.env` file to match your PostgreSQL c
 ## Roadmap
 
 - Complete responsive design
-- Add user authentication and authorization
-- Add due dates and priority levels to tasks
-- Implement task categories or labels
-- Add task filtering and search functionality
+- Add priority levels to tasks
+- Add user settings
 
 ## Contributing
 
@@ -89,7 +89,3 @@ This is an early development version of the Task Manager application. Some featu
 - **Database:** Information on how to configure and set up the database.
 - **Roadmap:** Future features and improvements planned for the app.
 - **Contributing:** Encourages contributions and mentions the development status.
-
-Make sure to replace the placeholder repository link (`https://github.com/gnovl/ez-task-flow-app.git`) with your actual GitHub repository URL.
-
-Let me know if you'd like to make any other changes!
