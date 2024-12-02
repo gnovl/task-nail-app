@@ -19,7 +19,7 @@ All notable changes to this project will be documented in this file.
 - Improved date formatting in task details view
 - Robust task deletion in TasksList component
 
-## [0.1.0] - 2024-12-02
+## [0.1.0] - 2024-05-01
 
 ### Added
 
