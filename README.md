@@ -2,15 +2,24 @@
 
 This is a **Task Manager** application where users can manage their personal tasks. The app allows users to perform basic CRUD (Create, Read, Update, Delete) operations on tasks. Users can add new tasks, modify existing tasks, delete tasks, and manage the tasks they've added.
 
-> **Note:** This application is still under development. Some features and responsive design are pending.
-
 ## Features
 
-- Add new tasks
-- Edit existing tasks
-- Delete tasks
-- Manage tasks (mark as completed, organize, etc.)
-- **Coming soon:** Responsive design and additional features
+- User authentication and authorization
+- Add, edit, and delete tasks
+- Task categorization with tags
+- Priority levels for tasks
+- Due date tracking
+- Task status management
+- Grid and list view options
+- User profile settings
+- Responsive sidebar layout
+
+## Demo Account
+
+You can test the application using these credentials:
+
+- Email: test@example.com
+- Password: 1234
 
 ## Tech Stack
 
@@ -19,6 +28,7 @@ This is a **Task Manager** application where users can manage their personal tas
 - **Tailwind CSS** - Utility-first CSS framework for rapid UI development
 - **Prisma** - Database ORM (Object-Relational Mapping)
 - **PostgreSQL** - The database used for storing tasks data
+- **NextAuth.js** - Authentication for Next.js applications
 
 ## Installation
 
@@ -31,25 +41,45 @@ To get started with the project locally, follow these steps:
    cd task-manager
    ```
 
-2. Install dependencies: Make sure you have Node.js installed, then run:
+2. **Install dependencies:**
+   Make sure you have Node.js installed, then run:
 
-`npm install`
+   ```bash
+   npm install
+   ```
 
-3. Set up environment variables: Create a .env file in the root directory and add the following:
+3. **Set up environment variables:**
+   Create a .env file in the root directory and add the following:
 
-DATABASE_URL="postgresql://postgres:your-password@localhost:5432/postgres?schema=public"
-NEXTAUTH_URL=http://localhost:3000
+   ```
+   DATABASE_URL="postgresql://postgres:your-password@localhost:5432/postgres?schema=public"
+   NEXTAUTH_URL=http://localhost:3000
+   NEXTAUTH_SECRET=your_secret_key_here
+   ```
 
-Replace `<your-password>` with your actual PostgreSQL admin password.
+   Replace `your-password` with your actual PostgreSQL admin password.
 
-4. Set up the database: You'll need to apply the Prisma migrations to set up your PostgreSQL database schema. Run the following command:
+4. **Set up the database:**
+   Apply the Prisma migrations to set up your PostgreSQL database schema:
 
-`npx prisma migrate dev`
+   ```bash
+   npx prisma migrate dev
+   ```
 
-Running the Application
-To run the application in development mode, use the following command:
+5. **Create test user:**
+   Run the following commands in your terminal:
+   ```bash
+   npx prisma studio
+   ```
+   Then create a new user with the test credentials through the Prisma Studio interface.
 
-`npm run dev`
+## Running the Application
+
+To run the application in development mode:
+
+```bash
+npm run dev
+```
 
 This will start the server on http://localhost:3000.
 
@@ -60,32 +90,25 @@ This will start the server on http://localhost:3000.
 - `npm run start` - Runs the production server
 - `npm run lint` - Lints the codebase for potential errors
 
-## Database
+## Database Setup
 
-This application uses **Prisma** as the ORM and **PostgreSQL** as the database. Ensure that your PostgreSQL instance is running locally or remotely with the appropriate credentials.
+When deploying the application:
 
-You can modify the `DATABASE_URL` in your `.env` file to match your PostgreSQL connection settings.
+1. Set up a PostgreSQL database
+2. Update the DATABASE_URL in your environment variables
+3. Run migrations: `npx prisma migrate deploy`
+4. Create the test user account using Prisma Studio
 
-## Roadmap
+The database schema will be automatically created based on the Prisma models when you run the migrations.
 
-- Complete responsive design
-- Add priority levels to tasks
-- Add user settings
+## Version History
+
+See [CHANGELOG.md](CHANGELOG.md) for a detailed list of changes in each version.
 
 ## Contributing
 
 Contributions and feedback are welcome! Feel free to fork the repository and open a pull request.
 
-## Disclaimer
+## License
 
-This is an early development version of the Task Manager application. Some features might not work as expected, and the UI is not fully responsive yet.
-
-### Key Sections Explained:
-
-- **Project Overview:** A simple, high-level overview of the app and its current state.
-- **Tech Stack:** Lists the key technologies involved in the project.
-- **Installation Instructions:** Step-by-step guide to help others set it up locally.
-- **Running the App:** Instructions for running the app in development mode.
-- **Database:** Information on how to configure and set up the database.
-- **Roadmap:** Future features and improvements planned for the app.
-- **Contributing:** Encourages contributions and mentions the development status.
+This project is licensed under the MIT License - see the LICENSE file for details.
