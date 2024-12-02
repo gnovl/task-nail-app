@@ -32,7 +32,7 @@ export default async function TasksPage() {
   const tasks = session?.user?.id ? await getTasks(session.user.id) : [];
 
   return (
-    <SidebarLayout tasks={tasks} isTasksPage={true}>
+    <SidebarLayout tasks={tasks} isAddTaskPage={false}>
       <TasksComponent initialTasks={tasks} />
     </SidebarLayout>
   );

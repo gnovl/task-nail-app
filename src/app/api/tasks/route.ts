@@ -62,6 +62,14 @@ export async function POST(request: Request) {
     );
   }
 
+  // Validate tags
+  if (tags && !Array.isArray(tags)) {
+    return NextResponse.json(
+      { message: "Tags must be an array" },
+      { status: 400 }
+    );
+  }
+
   try {
     const user = await prisma.user.findUnique({
       where: { email: session.user.email },
@@ -78,7 +86,7 @@ export async function POST(request: Request) {
         dueDate: dueDate ? new Date(dueDate) : null,
         priority,
         status,
-        tags: tags ? tags.trim() : null,
+        tags: tags || [],
         user: { connect: { id: user.id } },
       },
     });

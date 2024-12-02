@@ -16,6 +16,26 @@ import {
   PencilSquareIcon,
   ArrowPathIcon,
 } from "@heroicons/react/24/outline";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import PulseLoader from "react-spinners/PulseLoader";
+const taskTags = [
+  "Work",
+  "Personal",
+  "Urgent",
+  "Important",
+  "Project",
+  "Meeting",
+  "FollowUp",
+  "Waiting",
+  "Delegated",
+  "Health",
+  "Finance",
+  "Learning",
+  "Home",
+  "Errand",
+  "Planning",
+];
 
 interface Task {
   id: string;
@@ -26,12 +46,7 @@ interface Task {
   dueDate: string | null;
   priority: string | null;
   status: string;
-  tags: string | null;
-}
-
-interface Toast {
-  message: string;
-  type: "success" | "error";
+  tags: string[];
 }
 
 export default function TaskDetailPage() {
@@ -44,7 +59,6 @@ export default function TaskDetailPage() {
   const [isEditing, setIsEditing] = useState(false);
   const [editedTask, setEditedTask] = useState<Task | null>(null);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-  const [toast, setToast] = useState<Toast | null>(null);
 
   useEffect(() => {
     fetchTasks();
@@ -52,13 +66,6 @@ export default function TaskDetailPage() {
       fetchTask();
     }
   }, [id]);
-
-  useEffect(() => {
-    if (toast) {
-      const timer = setTimeout(() => setToast(null), 3000);
-      return () => clearTimeout(timer);
-    }
-  }, [toast]);
 
   const fetchTasks = async () => {
     try {
@@ -89,8 +96,16 @@ export default function TaskDetailPage() {
     }
   };
 
-  const showToast = (message: string, type: "success" | "error") => {
-    setToast({ message, type });
+  const showToast = (message: string, type: "info" | "error") => {
+    toast[type](message, {
+      position: "top-right",
+      autoClose: 3000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: false,
+      draggable: true,
+      theme: "light",
+    });
   };
 
   const handleUpdate = async () => {
@@ -112,7 +127,7 @@ export default function TaskDetailPage() {
         const updatedTask = await response.json();
         setTask(updatedTask);
         setIsEditing(false);
-        showToast("Task updated successfully", "success");
+        showToast("Task updated successfully", "info");
       } else {
         const errorData = await response.json();
         showToast(errorData.error || "Failed to update task", "error");
@@ -134,8 +149,8 @@ export default function TaskDetailPage() {
       });
 
       if (response.ok) {
-        showToast("Task deleted successfully", "success");
-        setTimeout(() => router.push("/new"), 2000);
+        showToast("Task deleted successfully", "info");
+        setTimeout(() => router.push("/new"), 3000);
       } else {
         showToast("Failed to delete task", "error");
       }
@@ -150,8 +165,15 @@ export default function TaskDetailPage() {
   const renderContent = () => {
     if (status === "loading") {
       return (
-        <div className="flex justify-center items-center h-full">
-          Loading session...
+        <div className="flex justify-center items-center h-full gap-2">
+          <span className="text-gray-600">Loading session</span>
+          <PulseLoader
+            color="#4B5563"
+            loading={true}
+            size={4}
+            speedMultiplier={0.8}
+            aria-label="Loading Session"
+          />
         </div>
       );
     }
@@ -166,8 +188,15 @@ export default function TaskDetailPage() {
 
     if (!task) {
       return (
-        <div className="flex justify-center items-center h-full">
-          Loading task...
+        <div className="flex justify-center items-center h-full gap-2">
+          <span className="text-gray-600">Loading task</span>
+          <PulseLoader
+            color="#4B5563" // gray-600 to match the text
+            loading={true}
+            size={4}
+            speedMultiplier={0.8}
+            aria-label="Loading Task"
+          />
         </div>
       );
     }
@@ -285,16 +314,25 @@ export default function TaskDetailPage() {
             <span className="text-sm text-gray-600">
               Tags:{" "}
               {isEditing ? (
-                <input
-                  type="text"
-                  value={editedTask?.tags || ""}
+                <select
+                  value={editedTask?.tags[0] || ""}
                   onChange={(e) =>
-                    setEditedTask({ ...editedTask!, tags: e.target.value })
+                    setEditedTask({
+                      ...editedTask!,
+                      tags: e.target.value ? [e.target.value] : [],
+                    })
                   }
                   className="p-1 border rounded"
-                />
+                >
+                  <option value="">Select a tag</option>
+                  {taskTags.map((tag) => (
+                    <option key={tag} value={tag}>
+                      {tag}
+                    </option>
+                  ))}
+                </select>
               ) : (
-                task.tags || "None"
+                task.tags.join(", ") || "None"
               )}
             </span>
           </div>
@@ -351,19 +389,7 @@ export default function TaskDetailPage() {
 
   return (
     <SidebarLayout tasks={tasks} activeTaskId={id} isAddTaskPage={false}>
-      {toast && (
-        <div className="fixed top-4 right-4 z-50 animate-fade-in-out">
-          <div
-            className={`px-4 py-2 rounded shadow-lg ${
-              toast.type === "success"
-                ? "bg-blue-900 text-white"
-                : "bg-red-500 text-white"
-            }`}
-          >
-            {toast.message}
-          </div>
-        </div>
-      )}
+      <ToastContainer />
       {renderContent()}
       {isDeleteModalOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">

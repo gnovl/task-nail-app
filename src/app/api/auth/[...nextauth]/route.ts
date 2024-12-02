@@ -1,4 +1,3 @@
-// File: src/app/api/auth/[...nextauth]/route.ts
 import NextAuth, { NextAuthOptions, User } from "next-auth";
 import { JWT } from "next-auth/jwt";
 import CredentialsProvider from "next-auth/providers/credentials";
@@ -63,17 +62,44 @@ export const authOptions: NextAuthOptions = {
     strategy: "jwt",
   },
   callbacks: {
-    async jwt({ token, user }: { token: JWT; user?: User }) {
+    async jwt({
+      token,
+      user,
+      trigger,
+      session,
+    }: {
+      token: JWT;
+      user?: User;
+      trigger?: string;
+      session?: any;
+    }) {
       if (user) {
         token.id = user.id;
+        token.name = user.name;
+        token.email = user.email;
       }
+
+      // If the session was updated, refresh the token data
+      if (trigger === "update" && session) {
+        token.name = session.user.name;
+        token.email = session.user.email;
+      }
+
       return token;
     },
     async session({ session, token }: { session: any; token: JWT }) {
       if (session?.user) {
         session.user.id = token.id as string;
+        session.user.name = token.name as string | null;
+        session.user.email = token.email as string | null;
       }
       return session;
+    },
+  },
+  events: {
+    async updateUser({ user }) {
+      // This event is triggered when a user is updated
+      // You can add any additional logic here if needed
     },
   },
   pages: {

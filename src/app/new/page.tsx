@@ -11,8 +11,50 @@ interface Task {
   dueDate: string | null;
   priority: string | null;
   status: string;
-  tags: string | null;
+  tags: string[];
 }
+
+const taskTags = [
+  "Work",
+  "Personal",
+  "Urgent",
+  "Important",
+  "Project",
+  "Meeting",
+  "FollowUp",
+  "Waiting",
+  "Delegated",
+  "Health",
+  "Finance",
+  "Learning",
+  "Home",
+  "Errand",
+  "Planning",
+];
+
+const formatDateTime = (date: Date) => {
+  const months = [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
+  ];
+
+  const day = date.getDate().toString().padStart(2, "0");
+  const month = months[date.getMonth()];
+  const hours = date.getHours().toString().padStart(2, "0");
+  const minutes = date.getMinutes().toString().padStart(2, "0");
+
+  return `${day} ${month} ${hours}:${minutes}`;
+};
 
 export default function Dashboard() {
   const [taskTitle, setTaskTitle] = useState("");
@@ -20,11 +62,10 @@ export default function Dashboard() {
   const [dueDate, setDueDate] = useState("");
   const [priority, setPriority] = useState("");
   const [status, setStatus] = useState("Not Started");
-  const [tags, setTags] = useState("");
   const [currentDateTime, setCurrentDateTime] = useState("");
-
   const [tasks, setTasks] = useState<Task[]>([]);
   const { data: session } = useSession();
+  const [selectedTag, setSelectedTag] = useState("");
 
   const [toast, setToast] = useState<{
     type: "success" | "error";
@@ -47,7 +88,7 @@ export default function Dashboard() {
 
   const updateDateTime = () => {
     const now = new Date();
-    setCurrentDateTime(now.toLocaleString());
+    setCurrentDateTime(formatDateTime(now));
   };
 
   const fetchTasks = async () => {
@@ -84,7 +125,7 @@ export default function Dashboard() {
           dueDate,
           priority,
           status,
-          tags: tags.trim(),
+          tag: selectedTag, // Change this from tags to tag
         }),
       });
 
@@ -111,14 +152,14 @@ export default function Dashboard() {
     setDueDate("");
     setPriority("");
     setStatus("Not Started");
-    setTags("");
+    setSelectedTag("");
   };
 
   return (
     <SidebarLayout tasks={tasks} isAddTaskPage={true}>
-      <div className="max-w-4xl mx-auto p-4">
-        <div className="flex justify-between items-center mb-6">
-          <h1 className="text-2xl font-bold">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 space-y-4 sm:space-y-0">
+          <h1 className="text-2xl sm:text-3xl font-bold">
             Welcome, {session?.user?.name || "to Your Dashboard"}
           </h1>
           <div className="text-sm text-gray-600">{currentDateTime}</div>
@@ -134,114 +175,124 @@ export default function Dashboard() {
           </div>
         )}
 
-        <div className="bg-white shadow-md rounded p-6 mb-8">
+        <div className="bg-white shadow-md rounded p-4 sm:p-6 mb-8">
           <h2 className="text-xl font-semibold mb-4">Add New Task</h2>
-          <form
-            onSubmit={handleSubmit}
-            className="grid grid-cols-1 md:grid-cols-2 gap-4"
-          >
-            <div>
-              <label
-                htmlFor="taskTitle"
-                className="block text-sm font-medium text-gray-700 mb-1"
-              >
-                Task Title
-              </label>
-              <input
-                type="text"
-                id="taskTitle"
-                value={taskTitle}
-                onChange={(e) => setTaskTitle(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500"
-                required
-              />
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label
+                  htmlFor="taskTitle"
+                  className="block text-sm font-medium text-gray-700 mb-1"
+                >
+                  Task Title
+                </label>
+                <input
+                  type="text"
+                  id="taskTitle"
+                  value={taskTitle}
+                  onChange={(e) => setTaskTitle(e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500"
+                  required
+                />
+              </div>
+              <div>
+                <label
+                  htmlFor="taskDescription"
+                  className="block text-sm font-medium text-gray-700 mb-1"
+                >
+                  Description
+                </label>
+                <textarea
+                  id="taskDescription"
+                  value={taskDescription}
+                  onChange={(e) => setTaskDescription(e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500"
+                  rows={2}
+                />
+              </div>
             </div>
-            <div>
-              <label
-                htmlFor="taskDescription"
-                className="block text-sm font-medium text-gray-700 mb-1"
-              >
-                Description
-              </label>
-              <textarea
-                id="taskDescription"
-                value={taskDescription}
-                onChange={(e) => setTaskDescription(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500"
-                rows={2}
-              />
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              <div>
+                <label
+                  htmlFor="dueDate"
+                  className="block text-sm font-medium text-gray-700 mb-1"
+                >
+                  Due Date
+                </label>
+                <input
+                  type="date"
+                  id="dueDate"
+                  value={dueDate}
+                  onChange={(e) => setDueDate(e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500"
+                />
+              </div>
+              <div>
+                <label
+                  htmlFor="priority"
+                  className="block text-sm font-medium text-gray-700 mb-1"
+                >
+                  Priority
+                </label>
+                <select
+                  id="priority"
+                  value={priority}
+                  onChange={(e) => setPriority(e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500"
+                >
+                  <option value="">Select Priority</option>
+                  <option value="Low">Low</option>
+                  <option value="Medium">Medium</option>
+                  <option value="High">High</option>
+                </select>
+              </div>
+              <div>
+                <label
+                  htmlFor="status"
+                  className="block text-sm font-medium text-gray-700 mb-1"
+                >
+                  Status
+                </label>
+                <select
+                  id="status"
+                  value={status}
+                  onChange={(e) => setStatus(e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500"
+                >
+                  <option value="Not Started">Not Started</option>
+                  <option value="In Progress">In Progress</option>
+                  <option value="Completed">Completed</option>
+                </select>
+              </div>
             </div>
+
             <div>
               <label
-                htmlFor="dueDate"
+                htmlFor="tag"
                 className="block text-sm font-medium text-gray-700 mb-1"
               >
-                Due Date
-              </label>
-              <input
-                type="date"
-                id="dueDate"
-                value={dueDate}
-                onChange={(e) => setDueDate(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500"
-              />
-            </div>
-            <div>
-              <label
-                htmlFor="priority"
-                className="block text-sm font-medium text-gray-700 mb-1"
-              >
-                Priority
+                Tag
               </label>
               <select
-                id="priority"
-                value={priority}
-                onChange={(e) => setPriority(e.target.value)}
+                id="tag"
+                value={selectedTag}
+                onChange={(e) => setSelectedTag(e.target.value)}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500"
               >
-                <option value="">Select Priority</option>
-                <option value="Low">Low</option>
-                <option value="Medium">Medium</option>
-                <option value="High">High</option>
+                <option value="">Select a tag</option>
+                {taskTags.map((tag) => (
+                  <option key={tag} value={tag}>
+                    {tag}
+                  </option>
+                ))}
               </select>
             </div>
-            <div>
-              <label
-                htmlFor="status"
-                className="block text-sm font-medium text-gray-700 mb-1"
-              >
-                Status
-              </label>
-              <select
-                id="status"
-                value={status}
-                onChange={(e) => setStatus(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500"
-              >
-                <option value="Not Started">Not Started</option>
-                <option value="In Progress">In Progress</option>
-                <option value="Completed">Completed</option>
-              </select>
-            </div>
-            <div>
-              <label
-                htmlFor="tags"
-                className="block text-sm font-medium text-gray-700 mb-1"
-              >
-                Tags (comma-separated)
-              </label>
-              <input
-                type="text"
-                id="tags"
-                value={tags}
-                onChange={(e) => setTags(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500"
-              />
-            </div>
-            <div className="md:col-span-2">
+
+            <div className="pt-4">
               <button
                 type="submit"
-                className="w-full bg-black hover:bg-gray-800 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                className="w-full sm:w-auto px-6 py-2 bg-black hover:bg-gray-800 text-white font-bold rounded-md focus:outline-none focus:shadow-outline transition-colors duration-200"
               >
                 Add Task
               </button>

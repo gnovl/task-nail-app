@@ -58,6 +58,24 @@ model VerificationToken {
   @@unique([identifier, token])
 }
 
+enum TaskTag {
+  Work
+  Personal
+  Urgent
+  Important
+  Project
+  Meeting
+  FollowUp
+  Waiting
+  Delegated
+  Health
+  Finance
+  Learning
+  Home
+  Errand
+  Planning
+}
+
 model Task {
   id          String   @id @default(cuid())
   title       String
@@ -70,6 +88,6 @@ model Task {
   dueDate     DateTime?
   priority    String?
   status      String   @default("Not Started")
-  tags        String?
+  tags        TaskTag[]
   estimatedTime Int?
 }
