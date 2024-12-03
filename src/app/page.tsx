@@ -129,7 +129,7 @@ export default function Home() {
               Privacy
             </Link>
             <Link
-              href="https://github.com/yourusername/eztask"
+              href="https://github.com/gnovl/task-Ezy-app"
               className="text-gray-600 hover:text-gray-900 text-xs underline"
             >
               GitHub
