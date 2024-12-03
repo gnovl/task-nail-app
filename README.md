@@ -37,7 +37,7 @@ To get started with the project locally, follow these steps:
 1. **Clone the repository:**
 
    ```bash
-   git clone https://github.com/gnovl/ez-task-flow-app.git
+   git clone https://github.com/gnovl/task-Ezy-app.git
    cd task-manager
    ```
 
