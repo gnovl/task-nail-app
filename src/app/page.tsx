@@ -1,6 +1,9 @@
-import React from "react";
+"use client";
+import React, { useState } from "react";
 import Link from "next/link";
-import Image from "next/image";
+import { useRouter } from "next/navigation";
+import LoginModal from "./_components/LoginModal";
+import RegisterModal from "./_components/RegisterModal";
 import {
   ArrowRightIcon,
   CheckCircleIcon,
@@ -33,6 +36,36 @@ const features = [
 ];
 
 export default function Home() {
+  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+  const [isRegisterModalOpen, setIsRegisterModalOpen] = useState(false);
+  const router = useRouter();
+
+  const handleGetStarted = () => {
+    if (window.innerWidth < 768) {
+      router.push("/login");
+    } else {
+      setIsLoginModalOpen(true);
+    }
+  };
+
+  const handleRegister = () => {
+    if (window.innerWidth < 768) {
+      router.push("/register");
+    } else {
+      setIsRegisterModalOpen(true);
+    }
+  };
+
+  const switchToLogin = () => {
+    setIsRegisterModalOpen(false);
+    setIsLoginModalOpen(true);
+  };
+
+  const switchToRegister = () => {
+    setIsLoginModalOpen(false);
+    setIsRegisterModalOpen(true);
+  };
+
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-b from-gray-50 to-white">
       <main className="flex-grow">
@@ -53,8 +86,8 @@ export default function Home() {
                   </p>
                   <div className="mt-5 sm:mt-8 sm:flex sm:justify-center lg:justify-start">
                     <div className="rounded-md shadow">
-                      <Link
-                        href="/login"
+                      <button
+                        onClick={handleGetStarted}
                         className="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-white bg-green-600 hover:bg-green-700 md:py-4 md:text-lg md:px-10"
                       >
                         Get Started
@@ -62,15 +95,15 @@ export default function Home() {
                           className="ml-2 -mr-1 h-5 w-5"
                           aria-hidden="true"
                         />
-                      </Link>
+                      </button>
                     </div>
                     <div className="mt-3 sm:mt-0 sm:ml-3">
-                      <Link
-                        href="/register"
+                      <button
+                        onClick={handleRegister}
                         className="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-green-700 bg-green-100 hover:bg-green-200 md:py-4 md:text-lg md:px-10"
                       >
                         Register
-                      </Link>
+                      </button>
                     </div>
                   </div>
                 </div>
@@ -143,6 +176,16 @@ export default function Home() {
           </nav>
         </div>
       </footer>
+      <LoginModal
+        isOpen={isLoginModalOpen}
+        onClose={() => setIsLoginModalOpen(false)}
+        onSwitchToRegister={switchToRegister}
+      />
+      <RegisterModal
+        isOpen={isRegisterModalOpen}
+        onClose={() => setIsRegisterModalOpen(false)}
+        onSwitchToLogin={switchToLogin}
+      />
     </div>
   );
 }

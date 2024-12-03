@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { PulseLoader, BounceLoader } from "react-spinners";
+import { PulseLoader } from "react-spinners";
 import { format } from "date-fns";
 import {
   CalendarIcon,

@@ -4,7 +4,6 @@ import { useState } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import Image from "next/image";
 
 export default function Login() {
   const [email, setEmail] = useState<string>("");
@@ -42,18 +41,6 @@ export default function Login() {
           </Link>
         </div>
         <div className="w-full p-4 space-y-6 bg-white rounded-lg shadow-lg">
-          <div className="mb-2">
-            <Image
-              src="/main-pic.png"
-              alt="EzTask Logo"
-              width={300}
-              height={300}
-              placeholder="blur"
-              blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAAAAQwAABtbnRyUkdCIFhZWiAH4AABAAEAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAACRyWFlaAAABFAAAABRnWFlaAAABKAAAABRiWFlaAAABPAAAABR3dHB0AAABUAAAABRyVFJDAAABZAAAAChnVFJDAAABZAAAAChiVFJDAAABZAAAAChjcHJ0AAABjAAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAAgAAAAcAHMAUgBHAEJYWVogAAAAAAAAb6IAADj1AAADkFhZWiAAAAAAAABimQAAt4UAABjaWFlaIAAAAAAAACSgAAAPhAAAts9YWVogAAAAAAAA9tYAAQAAAADTLXBhcmEAAAAAAAQAAAACZmYAAPKnAAANWQAAE9AAAApbAAAAAAAAAABtbHVjAAAAAAAAAAEAAAAMZW5VUwAAACAAAAAcAEcAbwBvAGcAbABlACAASQBuAGMALgAgADIAMAAxADb/2wBDABQODxIPDRQSEBIXFRQYHjIhHhwcHj0sLiQySUBMS0dARkVQWnNiUFVtVkVGZIhlbXd7gYKBTmCNl4x9lnN+gXz/2wBDARUXFx4aHjshITt8U0ZTfHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHz/wAARCACCAIIDASIAAhEBAxEB/8QAGAABAQEBAQAAAAAAAAAAAAAAAAECAwb/xAAWEAEBAQAAAAAAAAAAAAAAAAAAARH/xAAUAQEAAAAAAAAAAAAAAAAAAAAA/8QAFBEBAAAAAAAAAAAAAAAAAAAAAP/aAAwDAQACEQMRAD8A9eACIqAgICiAKACiACKgCKgAAOqKgIi1KCIVAUTTQaGdXQUTQFEAAAAAdAQEqVazQSppWbQXTU1NBrV1nTQb0ZUFAAAAAB1SiUErNarNBms1azQBAFVlQaVlQaEUBUAUQB1SqlBms1qs0GazWqzQRFAFRQWKigoAKAAADqlVAZrNaqUGKlarIIjSAKKAoAKAAAAAOqKgJWa1UoM1lqoCGKAmKoAKAgoCAAAA6oqAiVUBEUBAUAFAABBUBAAAAdUAEQAQAAABQAAAQAQAAAH/2Q=="
-              className="mx-auto"
-            />
-          </div>
-
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
               <label
