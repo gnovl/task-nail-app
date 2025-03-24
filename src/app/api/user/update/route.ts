@@ -8,31 +8,44 @@ export async function POST(req: Request) {
   const session = await getServerSession(authOptions);
 
   // If there's no session, return an unauthorized error
-  if (!session) {
+  if (!session?.user?.email) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  // Extract name and email from the request body
-  const { name, email } = await req.json();
-
   try {
-    // Update the user in the database
-    const updatedUser = await prisma.user.update({
-      where: { id: session.user.id }, // Find the user by their ID
-      data: { name, email }, // Update these fields
-      select: { id: true, name: true, email: true }, // Select which fields to return
-    });
+    // Extract name and email from the request body
+    const { name, email } = await req.json();
 
-    // Update the session with the new user information
-    if (session && session.user) {
-      session.user.name = updatedUser.name;
-      session.user.email = updatedUser.email;
+    // Check if email is already taken by another user
+    if (email !== session.user.email) {
+      const existingUser = await prisma.user.findUnique({
+        where: { email },
+      });
+
+      if (existingUser) {
+        return NextResponse.json(
+          { error: "Email is already taken" },
+          { status: 400 }
+        );
+      }
     }
 
-    // Return the updated user information
+    // Update the user in the database
+    const updatedUser = await prisma.user.update({
+      where: { email: session.user.email },
+      data: {
+        name,
+        email,
+      },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+      },
+    });
+
     return NextResponse.json(updatedUser);
   } catch (error) {
-    // If there's an error, log it and return a 500 status
     console.error("Error updating user:", error);
     return NextResponse.json(
       { error: "Failed to update user" },

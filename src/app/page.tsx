@@ -1,46 +1,56 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import LoginModal from "./_components/LoginModal";
 import RegisterModal from "./_components/RegisterModal";
 import {
-  ArrowRightIcon,
   CheckCircleIcon,
-  ChartBarIcon,
-  ClipboardIcon,
+  CalendarIcon,
+  ClipboardDocumentListIcon,
   BellIcon,
+  ArrowTrendingUpIcon,
+  ArrowRightIcon,
 } from "@heroicons/react/24/outline";
 
+// Core features to highlight
 const features = [
   {
-    name: "Quick Task Control",
-    description: "Effortlessly manage and prioritize your daily tasks",
-    icon: CheckCircleIcon,
+    name: "Task Management",
+    description: "Create, edit, and track task status with ease",
+    icon: ClipboardDocumentListIcon,
   },
   {
-    name: "Real-Time Progress",
-    description: "Track your productivity with visual analytics",
-    icon: ChartBarIcon,
-  },
-  {
-    name: "Streamlined Organize",
-    description: "Keep your projects and tasks neatly structured",
-    icon: ClipboardIcon,
-  },
-  {
-    name: "Smart Reminders",
-    description: "Never miss a deadline with intelligent notifications",
+    name: "Due Date Tracking",
+    description: "Never miss deadlines with due date notifications",
     icon: BellIcon,
+  },
+  {
+    name: "Calendar View",
+    description: "Visualize tasks by date with priority indicators",
+    icon: CalendarIcon,
+  },
+  {
+    name: "Progress Monitoring",
+    description: "Track completed tasks and productivity trends",
+    icon: ArrowTrendingUpIcon,
   },
 ];
 
 export default function Home() {
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const [isRegisterModalOpen, setIsRegisterModalOpen] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
   const router = useRouter();
 
+  // Fix hydration issues by setting mounted state after initial render
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
   const handleGetStarted = () => {
+    if (!isMounted) return;
+
     if (window.innerWidth < 768) {
       router.push("/login");
     } else {
@@ -49,6 +59,8 @@ export default function Home() {
   };
 
   const handleRegister = () => {
+    if (!isMounted) return;
+
     if (window.innerWidth < 768) {
       router.push("/register");
     } else {
@@ -68,6 +80,29 @@ export default function Home() {
 
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-b from-gray-50 to-white">
+      {/* Header/Navigation */}
+      <header className="w-full py-4 px-4 sm:px-6 lg:px-8 border-b border-gray-100">
+        <div className="max-w-7xl mx-auto flex justify-between items-center">
+          <div className="flex items-center">
+            <h1 className="text-xl font-bold text-gray-900">TaskNail</h1>
+          </div>
+          <nav className="hidden md:flex space-x-1">
+            <button
+              onClick={handleGetStarted}
+              className="px-4 py-2 text-sm text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-md transition-colors"
+            >
+              Log In
+            </button>
+            <button
+              onClick={handleRegister}
+              className="px-4 py-2 text-sm text-white bg-black hover:bg-gray-800 rounded-md transition-colors"
+            >
+              Register
+            </button>
+          </nav>
+        </div>
+      </header>
+
       <main className="flex-grow">
         {/* Hero Section */}
         <div className="relative overflow-hidden">
@@ -76,19 +111,41 @@ export default function Home() {
               <div className="mt-10 mx-auto max-w-7xl px-4 sm:mt-12 sm:px-6 md:mt-16 lg:mt-20 lg:px-8 xl:mt-28">
                 <div className="sm:text-center lg:text-left">
                   <h1 className="text-4xl tracking-tight font-extrabold text-gray-900 sm:text-5xl md:text-6xl">
-                    <span className="block">Simplify your workflow</span>
-                    <span className="block text-green-600">with taskEzy</span>
+                    <span className="block">The simplest way to</span>
+                    <span className="block text-black">manage your tasks</span>
                   </h1>
                   <p className="mt-3 text-base text-gray-500 sm:mt-5 sm:text-lg sm:max-w-xl sm:mx-auto md:mt-5 md:text-xl lg:mx-0">
-                    Stay focused and organized with our intuitive task
-                    management solution. Boost your productivity and achieve
-                    more, every day.
+                    TaskNail helps you organize your work and life with a clean,
+                    intuitive interface. Stay on top of deadlines, visualize
+                    your tasks, and boost your productivity—all for free.
                   </p>
-                  <div className="mt-5 sm:mt-8 sm:flex sm:justify-center lg:justify-start">
+
+                  {/* Feature highlights */}
+                  <div className="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-4 sm:gap-6 lg:mt-8">
+                    {features.map((feature) => (
+                      <div
+                        key={feature.name}
+                        className="bg-white p-3 rounded-lg shadow-sm"
+                      >
+                        <div className="flex items-center mb-1">
+                          <feature.icon className="h-5 w-5 text-gray-600 mr-2" />
+                          <h3 className="text-sm font-medium text-gray-900">
+                            {feature.name}
+                          </h3>
+                        </div>
+                        <p className="text-xs text-gray-500">
+                          {feature.description}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* CTA buttons */}
+                  <div className="mt-8 sm:flex sm:justify-center lg:justify-start">
                     <div className="rounded-md shadow">
                       <button
                         onClick={handleGetStarted}
-                        className="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-white bg-green-600 hover:bg-green-700 md:py-4 md:text-lg md:px-10"
+                        className="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-white bg-black hover:bg-gray-800 md:py-4 md:text-lg md:px-10 transition-colors"
                       >
                         Get Started
                         <ArrowRightIcon
@@ -100,10 +157,20 @@ export default function Home() {
                     <div className="mt-3 sm:mt-0 sm:ml-3">
                       <button
                         onClick={handleRegister}
-                        className="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-green-700 bg-green-100 hover:bg-green-200 md:py-4 md:text-lg md:px-10"
+                        className="w-full flex items-center justify-center px-8 py-3 border border-gray-300 text-base font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 md:py-4 md:text-lg md:px-10 transition-colors"
                       >
                         Register
                       </button>
+                    </div>
+                  </div>
+
+                  {/* Free forever badge */}
+                  <div className="mt-6 sm:mt-8 flex justify-center lg:justify-start">
+                    <div className="inline-flex items-center px-4 py-2 bg-green-50 border border-green-200 rounded-full">
+                      <CheckCircleIcon className="h-5 w-5 text-green-500 mr-2" />
+                      <span className="text-sm font-medium text-green-700">
+                        100% Free. No Credit Card Required.
+                      </span>
                     </div>
                   </div>
                 </div>
@@ -111,81 +178,46 @@ export default function Home() {
             </div>
           </div>
         </div>
-
-        {/* Feature Section */}
-        <div className="py-12 bg-white">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="lg:text-center">
-              <h2 className="text-base text-green-600 font-semibold tracking-wide uppercase">
-                Features
-              </h2>
-              <p className="mt-2 text-3xl leading-8 font-extrabold tracking-tight text-gray-900 sm:text-4xl">
-                Everything you need to stay productive
-              </p>
-            </div>
-
-            <div className="mt-10">
-              <div className="space-y-10 md:space-y-0 md:grid md:grid-cols-2 md:gap-x-8 md:gap-y-10">
-                {features.map((feature) => (
-                  <div key={feature.name} className="relative">
-                    <div className="absolute flex items-center justify-center h-12 w-12 rounded-md bg-green-500 text-white">
-                      <feature.icon className="h-6 w-6" aria-hidden="true" />
-                    </div>
-                    <p className="ml-16 text-lg leading-6 font-medium text-gray-900">
-                      {feature.name}
-                    </p>
-                    <p className="mt-2 ml-16 text-base text-gray-500">
-                      {feature.description}
-                    </p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
       </main>
 
-      {/* Footer remains unchanged */}
-      <footer className="bg-gray-50 py-3 mt-4">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <nav className="flex justify-center space-x-6">
-            <Link
-              href="/about"
-              className="text-gray-600 hover:text-gray-900 text-xs underline"
-            >
-              About
-            </Link>
-            <Link
-              href="/privacy"
-              className="text-gray-600 hover:text-gray-900 text-xs underline"
-            >
-              Privacy
-            </Link>
-            <Link
-              href="https://github.com/gnovl/task-Ezy-app"
-              className="text-gray-600 hover:text-gray-900 text-xs underline"
-            >
-              GitHub
-            </Link>
-            <Link
-              href="/terms"
-              className="text-gray-600 hover:text-gray-900 text-xs underline"
-            >
-              Terms
-            </Link>
-          </nav>
+      {/* Footer */}
+      <footer className="w-full py-6 px-4 bg-white border-t border-gray-100">
+        <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center">
+          <div className="mb-4 md:mb-0">
+            <p className="text-base font-medium text-gray-900">TaskNail</p>
+            <p className="text-sm text-gray-500">
+              © 2025 TaskNail. All rights reserved.
+            </p>
+          </div>
+          <div className="flex space-x-4 text-sm text-gray-500">
+            <a href="#" className="hover:text-gray-700">
+              Privacy Policy
+            </a>
+            <a href="#" className="hover:text-gray-700">
+              Terms of Service
+            </a>
+            <a href="#" className="hover:text-gray-700">
+              Contact
+            </a>
+          </div>
         </div>
       </footer>
-      <LoginModal
-        isOpen={isLoginModalOpen}
-        onClose={() => setIsLoginModalOpen(false)}
-        onSwitchToRegister={switchToRegister}
-      />
-      <RegisterModal
-        isOpen={isRegisterModalOpen}
-        onClose={() => setIsRegisterModalOpen(false)}
-        onSwitchToLogin={switchToLogin}
-      />
+
+      {/* Only render modals client-side after mount */}
+      {isMounted && (
+        <>
+          <LoginModal
+            isOpen={isLoginModalOpen}
+            onClose={() => setIsLoginModalOpen(false)}
+            onSwitchToRegister={switchToRegister}
+          />
+          <RegisterModal
+            isOpen={isRegisterModalOpen}
+            onClose={() => setIsRegisterModalOpen(false)}
+            onSwitchToLogin={switchToLogin}
+          />
+        </>
+      )}
     </div>
   );
 }

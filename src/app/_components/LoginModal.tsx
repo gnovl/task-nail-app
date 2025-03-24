@@ -1,9 +1,18 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { XMarkIcon } from "@heroicons/react/24/outline";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { XMarkIcon } from "@heroicons/react/24/outline";
+
+// Define error messages for different error codes
+const errorMessages = {
+  email_not_found:
+    "This email is not registered. Please create an account first.",
+  invalid_password: "Incorrect password. Please try again.",
+  default_error: "Authentication failed. Please check your credentials.",
+  CredentialsSignin: "Invalid email or password. Please try again.",
+};
 
 interface LoginModalProps {
   isOpen: boolean;
@@ -16,16 +25,25 @@ export default function LoginModal({
   onClose,
   onSwitchToRegister,
 }: LoginModalProps) {
-  const [email, setEmail] = useState<string>("");
-  const [password, setPassword] = useState<string>("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [mounted, setMounted] = useState(false);
   const router = useRouter();
 
-  if (!isOpen) return null;
+  // Fix hydration issues by using useEffect to set mounted state
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  // Don't render anything during SSR or until component is mounted
+  if (!mounted || !isOpen) return null;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
+    setIsLoading(true);
 
     try {
       const result = await signIn("credentials", {
@@ -35,19 +53,25 @@ export default function LoginModal({
       });
 
       if (result?.error) {
-        setError(result.error);
+        // Map the error code to a user-friendly message
+        setError(
+          errorMessages[result.error as keyof typeof errorMessages] ||
+            "Authentication failed. Please try again."
+        );
       } else {
-        router.push("/new");
         onClose();
+        router.push("/dashboard");
       }
     } catch (err) {
       setError("Something went wrong. Please try again.");
+    } finally {
+      setIsLoading(false);
     }
   };
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="relative w-full max-w-md bg-white rounded-lg shadow-lg p-6">
+      <div className="relative w-full max-w-md bg-white rounded-md shadow-lg p-6">
         <button
           onClick={onClose}
           className="absolute top-4 right-4 text-gray-400 hover:text-gray-600"
@@ -55,9 +79,16 @@ export default function LoginModal({
           <XMarkIcon className="h-6 w-6" />
         </button>
 
-        <h2 className="text-2xl font-bold mb-6 text-center">Welcome Back</h2>
+        <div className="text-center mb-6">
+          <h2 className="text-2xl font-bold text-gray-900">
+            Sign in to TaskNail
+          </h2>
+          <p className="mt-2 text-sm text-gray-500">
+            Access your tasks and manage your productivity
+          </p>
+        </div>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form onSubmit={handleSubmit} className="space-y-5">
           <div>
             <label
               htmlFor="email"
@@ -71,7 +102,7 @@ export default function LoginModal({
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-1 focus:ring-black focus:border-black"
             />
           </div>
 
@@ -88,27 +119,32 @@ export default function LoginModal({
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-1 focus:ring-black focus:border-black"
             />
           </div>
 
-          {error && <p className="text-sm text-red-600">{error}</p>}
+          {error && (
+            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-2 rounded-md text-sm">
+              {error}
+            </div>
+          )}
 
           <button
             type="submit"
-            className="w-full py-2 px-4 bg-black hover:bg-gray-800 text-white rounded-md transition duration-200"
+            disabled={isLoading}
+            className="w-full py-3 px-4 bg-black hover:bg-gray-800 text-white font-medium rounded-md transition duration-200 disabled:opacity-70"
           >
-            Sign In
+            {isLoading ? "Signing in..." : "Sign in"}
           </button>
         </form>
 
-        <p className="mt-4 text-center text-sm text-gray-600">
+        <p className="mt-6 text-center text-sm text-gray-600">
           Don't have an account?{" "}
           <button
             onClick={onSwitchToRegister}
-            className="text-blue-600 hover:underline focus:outline-none"
+            className="text-black font-medium hover:underline focus:outline-none"
           >
-            Register here
+            Create account
           </button>
         </p>
       </div>

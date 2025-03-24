@@ -105,7 +105,13 @@ export async function PUT(
       where: { id: taskId },
       data: {
         ...updatedData,
-        updatedAt: new Date(),
+        lastEditedAt: new Date(), // Update lastEditedAt when content changes
+        category: updatedData.category || null,
+        // Make sure completedAt is properly handled
+        completedAt:
+          updatedData.status === "Completed"
+            ? updatedData.completedAt || new Date()
+            : null,
       },
     });
 

@@ -1,26 +1,40 @@
+// src/app/_components/SidebarLayout.tsx
 "use client";
+
 import Link from "next/link";
-import { ReactNode, useEffect, useState } from "react";
+import { ReactNode, useState, useEffect } from "react";
 import { useSession, signOut } from "next-auth/react";
 import { Menu } from "@headlessui/react";
 import { usePathname, useRouter } from "next/navigation";
 import Hamburger from "hamburger-react";
 import { appVersion } from "../config/version";
-
+import QuickTaskModal from "./QuickTaskModal";
 import {
-  PlusIcon,
-  ClipboardDocumentListIcon,
-  QueueListIcon,
-  ArrowRightIcon,
-  UserCircleIcon,
-  CogIcon,
-  ArrowLeftEndOnRectangleIcon,
-  ChevronDownIcon,
-} from "@heroicons/react/24/outline";
+  LayoutDashboard,
+  ListTodo,
+  User,
+  Settings,
+  LogOut,
+  ChevronDown,
+  PlusCircle,
+} from "lucide-react";
+import { PulseLoader } from "react-spinners";
 
 interface Task {
   id: string;
   title: string;
+  description: string | null;
+  createdAt: string;
+  updatedAt: string;
+  dueDate: string | null;
+  priority: "High" | "Medium" | "Low" | null;
+  status: string;
+  category: string | null;
+  completed: boolean;
+  estimatedTime: number | null;
+  viewed: boolean;
+  isNew?: boolean;
+  pinned: boolean;
 }
 
 interface SidebarLayoutProps {
@@ -28,68 +42,95 @@ interface SidebarLayoutProps {
   tasks: Task[];
   activeTaskId?: string;
   isAddTaskPage?: boolean;
+  onTaskCreated?: (newTask: Task) => void;
 }
 
 export default function SidebarLayout({
   children,
   tasks,
   activeTaskId,
+  isAddTaskPage,
+  onTaskCreated,
 }: SidebarLayoutProps) {
-  const [taskCount, setTaskCount] = useState<number | null>(null);
   const { data: session, status } = useSession();
   const router = useRouter();
   const pathname = usePathname();
   const [isOpen, setOpen] = useState(false);
+  const [isQuickTaskModalOpen, setIsQuickTaskModalOpen] = useState(false);
+  const [selectedDate, setSelectedDate] = useState<Date | null>(new Date());
+  const [toast, setToast] = useState<{
+    type: "success" | "error";
+    message: string;
+  } | null>(null);
 
-  useEffect(() => {
-    async function fetchTaskCount() {
-      try {
-        const response = await fetch("/api/taskcount");
-        if (response.ok) {
-          const data = await response.json();
-          setTaskCount(data.count);
-        } else {
-          console.error("Failed to fetch task count");
-        }
-      } catch (error) {
-        console.error("Error fetching task count:", error);
-      }
-    }
+  const isLoading = status === "loading";
 
-    if (status === "authenticated") {
-      fetchTaskCount();
-    }
-  }, [status]);
-
-  // Close sidebar when route changes (mobile)
   useEffect(() => {
     setOpen(false);
   }, [pathname]);
 
-  const displayedTasks = tasks.slice(0, 7);
-  const hasMoreTasks = tasks.length > 7;
-
-  const isAddTaskPage = pathname === "/new";
   const isTasksPage = pathname === "/tasks";
+  const isDashboardPage = pathname === "/dashboard";
 
   const handleSignOut = async () => {
-    const data = await signOut({ redirect: false, callbackUrl: "/" });
-    router.push(data?.url ?? "/");
+    showToast("Logging out...", "success");
+    // Wait a moment to show the toast before redirecting
+    setTimeout(async () => {
+      const data = await signOut({ redirect: false, callbackUrl: "/" });
+      router.push(data?.url ?? "/");
+    }, 1500);
+  };
+
+  const handleCreateTask = async (taskData: any) => {
+    try {
+      const response = await fetch("/api/tasks", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(taskData),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Failed to create task");
+      }
+
+      const newTask = await response.json();
+      showToast("✅ Task created successfully", "success");
+      setIsQuickTaskModalOpen(false);
+
+      // Call the callback if it exists
+      if (onTaskCreated) {
+        onTaskCreated({ ...newTask, isNew: true });
+      }
+
+      return newTask;
+    } catch (error) {
+      console.error("Error creating task:", error);
+      showToast("Failed to create task", "error");
+      throw error;
+    }
+  };
+
+  const showToast = (message: string, type: "success" | "error") => {
+    setToast({ message, type });
+    setTimeout(() => setToast(null), 3000);
   };
 
   return (
-    <div className="flex h-screen bg-gray-100">
-      {/* Hamburger menu for mobile */}
-      <div className="lg:hidden fixed top-4 left-4 z-50">
+    <div className="flex h-screen bg-gray-50">
+      {/* Mobile hamburger - aligned with header content */}
+      <div className="lg:hidden fixed left-4 top-1 z-50">
         <Hamburger
           toggled={isOpen}
           toggle={setOpen}
           size={20}
-          easing="ease-in"
+          color="#4B5563"
         />
       </div>
 
-      {/* Overlay for mobile when sidebar is open */}
+      {/* Mobile overlay */}
       {isOpen && (
         <div
           className="lg:hidden fixed inset-0 bg-black bg-opacity-50 z-40"
@@ -101,133 +142,147 @@ export default function SidebarLayout({
       <div
         className={`fixed lg:relative lg:translate-x-0 transition-transform duration-300 ease-in-out transform ${
           isOpen ? "translate-x-0" : "-translate-x-full"
-        } w-64 h-screen bg-white shadow-md flex flex-col z-50`}
+        } w-60 h-screen bg-white shadow-sm flex flex-col z-50`}
       >
+        {/* Logo area */}
         <div className="p-4 mt-14 lg:mt-0">
-          <h2 className="text-xl font-semibold">taskEzy</h2>
-          <Link
-            href="/new"
-            className={`flex items-center mt-4 ${
-              isAddTaskPage
-                ? "bg-orange-100 text-orange-600"
-                : "text-orange-600 hover:bg-gray-100"
-            } px-2 py-1 rounded`}
+          <h2 className="text-lg font-semibold text-gray-900">TaskNail</h2>
+        </div>
+
+        {/* Create New Task Button (Positioned at the top) */}
+        <div className="px-2 mb-2">
+          <button
+            onClick={() => {
+              setSelectedDate(new Date());
+              setIsQuickTaskModalOpen(true);
+            }}
+            className="flex items-center w-full px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-green-50 hover:text-green-700 transition-colors"
           >
-            <PlusIcon className="mr-2" width={20} height={20} />
-            Add task
+            <PlusCircle className="w-4 h-4 mr-3 text-green-600" />
+            Create New Task
+          </button>
+        </div>
+
+        {/* Navigation */}
+        <nav className="flex-1 px-2 py-2">
+          <Link
+            href="/dashboard"
+            className={`flex items-center px-3 py-2 my-1 rounded-md text-sm font-medium transition-colors ${
+              isDashboardPage
+                ? "bg-gray-100 text-gray-900"
+                : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+            }`}
+          >
+            <LayoutDashboard className="w-4 h-4 mr-3" />
+            Dashboard
           </Link>
+
           <Link
             href="/tasks"
-            className={`flex items-center mt-2 ${
+            className={`flex items-center px-3 py-2 my-1 rounded-md text-sm font-medium transition-colors ${
               isTasksPage
-                ? "bg-orange-100 text-orange-600"
-                : "text-orange-600 hover:bg-gray-100"
-            } px-2 py-1 rounded`}
+                ? "bg-gray-100 text-gray-900"
+                : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+            }`}
           >
-            <QueueListIcon className="mr-2" width={20} height={20} />
-            All Tasks
-            {taskCount !== null && (
-              <span className="ml-auto bg-gray-300 text-gray-800 rounded-full px-2 py-1 text-xs">
-                {taskCount}
-              </span>
-            )}
+            <ListTodo className="w-4 h-4 mr-3" />
+            Tasks
           </Link>
-        </div>
-        <nav className="mt-8 flex-grow flex flex-col min-h-0">
-          <h3 className="px-4 text-sm font-medium text-gray-500 uppercase tracking-wider">
-            Recents
-          </h3>
-          <ul className="mt-2 overflow-y-auto">
-            {displayedTasks.map((task) => (
-              <li
-                key={task.id}
-                className={`px-4 py-2 ${
-                  task.id === activeTaskId
-                    ? "bg-orange-100 text-orange-600"
-                    : "hover:bg-gray-100"
-                }`}
-              >
-                <Link
-                  href={`/task/${task.id}`}
-                  className="flex items-center text-sm text-gray-700"
-                >
-                  <ClipboardDocumentListIcon
-                    className="mr-2 flex-shrink-0"
-                    width={16}
-                    height={16}
-                  />
-                  <span className="truncate">{task.title}</span>
-                </Link>
-              </li>
-            ))}
-            {hasMoreTasks && (
-              <li className="px-4 py-2 hover:bg-gray-100">
-                <Link
-                  href="/tasks"
-                  className="flex items-center text-sm text-orange-600 hover:text-orange-800"
-                >
-                  <span className="truncate mr-1">View all</span>
-                  <ArrowRightIcon className="w-4 h-4" />
-                </Link>
-              </li>
-            )}
-          </ul>
         </nav>
-        {/* Dividing line */}
-        <div className="border-t border-gray-200 my-4"></div>
-        {/* User Profile Section */}
-        <div className="mt-auto p-4">
-          <Menu as="div" className="relative">
-            <Menu.Button className="flex items-center w-full text-left px-3 py-2 rounded-md hover:bg-gray-100 transition-colors duration-200">
-              <UserCircleIcon className="w-8 h-8 text-gray-500 mr-2" />
-              <div className="flex-grow">
-                <p className="text-sm font-medium text-gray-700">
-                  {session?.user?.name}
-                </p>
-                <p className="text-xs text-gray-500">{session?.user?.email}</p>
+
+        {/* User section with loading state */}
+        <div className="p-3 border-t border-gray-100">
+          {isLoading ? (
+            <div className="px-3 py-2 flex items-center">
+              <div className="w-4 h-4 text-gray-500 mr-3">
+                <User className="w-4 h-4" />
               </div>
-              <ChevronDownIcon className="w-5 h-5 text-gray-500" />
-            </Menu.Button>
-            <Menu.Items className="absolute right-0 bottom-full mb-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none">
-              <Menu.Item>
-                {({ active }) => (
-                  <Link
-                    href="/settings"
-                    className={`${
-                      active ? "bg-gray-100" : ""
-                    } flex items-center px-4 py-2 text-sm text-gray-700`}
-                  >
-                    <CogIcon className="w-5 h-5 mr-2" />
-                    Settings
-                  </Link>
-                )}
-              </Menu.Item>
-              <Menu.Item>
-                {({ active }) => (
-                  <button
-                    onClick={handleSignOut}
-                    className={`${
-                      active ? "bg-gray-100" : ""
-                    } flex items-center w-full px-4 py-2 text-sm text-gray-700`}
-                  >
-                    <ArrowLeftEndOnRectangleIcon className="w-5 h-5 mr-2" />
-                    Log out
-                  </button>
-                )}
-              </Menu.Item>
-            </Menu.Items>
-          </Menu>
+              <div className="flex-1">
+                <div className="h-4 bg-gray-200 rounded w-24 mb-1.5 animate-pulse"></div>
+                <div className="h-3 bg-gray-200 rounded w-32 animate-pulse"></div>
+              </div>
+            </div>
+          ) : (
+            <Menu as="div" className="relative">
+              <Menu.Button className="flex items-center w-full px-3 py-2 text-left rounded-md hover:bg-gray-50 transition-colors">
+                <User className="w-4 h-4 text-gray-500 mr-3" />
+                <div className="flex-1 overflow-hidden">
+                  <p className="text-sm font-medium text-gray-900 truncate">
+                    {session?.user?.name}
+                  </p>
+                  <p className="text-sm text-gray-500 truncate">
+                    {session?.user?.email}
+                  </p>
+                </div>
+                <ChevronDown className="w-4 h-4 text-gray-400" />
+              </Menu.Button>
+
+              <Menu.Items className="absolute right-0 bottom-full mb-1 w-48 bg-white rounded-md shadow-lg border border-gray-100 focus:outline-none">
+                <Menu.Item>
+                  {({ active }) => (
+                    <Link
+                      href="/settings"
+                      className={`${
+                        active ? "bg-gray-50" : ""
+                      } flex items-center px-3 py-2 text-sm text-gray-600 hover:text-gray-900`}
+                    >
+                      <Settings className="w-4 h-4 mr-3" />
+                      Settings
+                    </Link>
+                  )}
+                </Menu.Item>
+                <Menu.Item>
+                  {({ active }) => (
+                    <button
+                      onClick={handleSignOut}
+                      className={`${
+                        active ? "bg-gray-50" : ""
+                      } flex items-center w-full px-3 py-2 text-sm text-gray-600 hover:text-gray-900`}
+                    >
+                      <LogOut className="w-4 h-4 mr-3" />
+                      Log out
+                    </button>
+                  )}
+                </Menu.Item>
+              </Menu.Items>
+            </Menu>
+          )}
         </div>
-        {/* Version Display */}
-        <div className="px-4 py-2 text-xs text-gray-500 text-center border-gray-200">
-          {appVersion.display}
+
+        {/* Version display with app name - smaller size */}
+        <div className="px-4 py-2 text-xs text-gray-400 text-center border-t border-gray-100">
+          TaskNail {appVersion.full}
         </div>
       </div>
 
       {/* Main content */}
-      <div className="flex-1 p-8 overflow-auto lg:ml-0 ml-0 pt-20 lg:pt-8">
-        {children}
-      </div>
+      <div className="flex-1 overflow-auto lg:ml-0 ml-0 pb-8">{children}</div>
+
+      {/* QuickTaskModal for the sidebar "Create New Task" button */}
+      <QuickTaskModal
+        isOpen={isQuickTaskModalOpen}
+        onClose={() => setIsQuickTaskModalOpen(false)}
+        onSubmit={handleCreateTask}
+        selectedDate={selectedDate}
+      />
+
+      {/* Toast Notification */}
+      {toast && (
+        <div className="fixed top-4 right-4 z-50 animate-fade-in">
+          <div
+            className={`px-4 py-3 rounded-lg shadow-lg ${
+              toast.type === "success"
+                ? "bg-green-50 text-green-800 border border-green-200"
+                : "bg-red-50 text-red-800 border border-red-200"
+            } flex items-center space-x-2 min-w-[300px]`}
+            style={{
+              animation: "slideIn 0.3s ease-out, slideOut 0.3s ease-in 2.7s",
+            }}
+          >
+            <span className="flex-1">{toast.message}</span>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

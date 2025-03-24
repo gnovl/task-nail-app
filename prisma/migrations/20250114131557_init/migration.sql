@@ -1,18 +1,19 @@
-/*
-  Warnings:
+-- CreateEnum
+CREATE TYPE "TaskCategory" AS ENUM ('Work', 'Personal', 'Study', 'Health', 'Finance', 'Shopping', 'Home', 'Other');
 
-  - The primary key for the `User` table will be changed. If it partially fails, the table could be left without primary key constraint.
+-- CreateTable
+CREATE TABLE "User" (
+    "id" TEXT NOT NULL,
+    "name" TEXT,
+    "email" TEXT NOT NULL,
+    "emailVerified" TIMESTAMP(3),
+    "image" TEXT,
+    "password" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
 
-*/
--- AlterTable
-ALTER TABLE "User" DROP CONSTRAINT "User_pkey",
-ADD COLUMN     "emailVerified" TIMESTAMP(3),
-ADD COLUMN     "image" TEXT,
-ADD COLUMN     "name" TEXT,
-ALTER COLUMN "id" DROP DEFAULT,
-ALTER COLUMN "id" SET DATA TYPE TEXT,
-ADD CONSTRAINT "User_pkey" PRIMARY KEY ("id");
-DROP SEQUENCE "User_id_seq";
+    CONSTRAINT "User_pkey" PRIMARY KEY ("id")
+);
 
 -- CreateTable
 CREATE TABLE "Account" (
@@ -61,11 +62,14 @@ CREATE TABLE "Task" (
     "dueDate" TIMESTAMP(3),
     "priority" TEXT,
     "status" TEXT NOT NULL DEFAULT 'Not Started',
-    "tags" TEXT,
+    "category" "TaskCategory",
     "estimatedTime" INTEGER,
 
     CONSTRAINT "Task_pkey" PRIMARY KEY ("id")
 );
+
+-- CreateIndex
+CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Account_provider_providerAccountId_key" ON "Account"("provider", "providerAccountId");

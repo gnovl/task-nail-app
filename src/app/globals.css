@@ -31,3 +31,97 @@ body {
     text-wrap: balance;
   }
 }
+
+/* Toast Notification Animations */
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideOut {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+}
+
+.tooltip {
+  position: relative;
+  display: block; /* Changed from inline-block to block */
+  width: 100%; /* Ensure full width */
+}
+
+.tooltip::before {
+  content: attr(data-tip);
+  position: absolute;
+  bottom: -35px; /* Changed from top to bottom to display below */
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 4px 8px;
+  background-color: #374151;
+  color: white;
+  font-size: 12px;
+  font-weight: 500;
+  white-space: nowrap;
+  border-radius: 4px;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.2s ease, visibility 0.2s ease;
+  z-index: 50;
+}
+
+.tooltip::after {
+  content: "";
+  position: absolute;
+  bottom: -12px; /* Changed from top to bottom */
+  left: 50%;
+  transform: translateX(-50%);
+  border: solid 5px transparent;
+  border-bottom-color: #374151; /* Changed from top to bottom */
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.2s ease, visibility 0.2s ease;
+  z-index: 50;
+}
+
+.tooltip:hover::before,
+.tooltip:hover::after {
+  opacity: 1;
+  visibility: visible;
+}
+
+.calendar-dropdown {
+  opacity: 0;
+  transform: translateY(-10px);
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.calendar-dropdown.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Calendar day hover effect */
+.calendar-day:hover {
+  background-color: rgba(59, 130, 246, 0.1);
+  border-radius: 9999px;
+}
+
+/* Task indicator animations */
+.task-indicator {
+  transition: transform 0.2s ease;
+}
+
+.task-indicator:hover {
+  transform: scale(1.2);
+}

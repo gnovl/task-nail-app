@@ -1,10 +1,24 @@
-// src/app/tasks/page.tsx
 import React from "react";
 import TasksComponent from "../_components/TasksList";
 import SidebarLayout from "../_components/SidebarLayout";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "../api/auth/[...nextauth]/route";
 import prisma from "../lib/prisma";
+import { TaskCategory } from "@prisma/client";
+
+interface Task {
+  id: string;
+  title: string;
+  dueDate: string | null;
+  priority: "Low" | "Medium" | "High" | null;
+  createdAt: string;
+  updatedAt: string;
+  description: string | null;
+  completed: boolean;
+  status: string;
+  category: TaskCategory | null;
+  estimatedTime: number | null;
+}
 
 async function getTasks(userId: string) {
   const tasks = await prisma.task.findMany({
@@ -22,8 +36,11 @@ async function getTasks(userId: string) {
     description: task.description,
     completed: task.completed,
     status: task.status,
-    tags: task.tags,
+    category: task.category,
     estimatedTime: task.estimatedTime,
+    viewed: task.viewed,
+    pinned: task.pinned,
+    completedAt: task.completedAt ? task.completedAt.toISOString() : null,
   }));
 }
 

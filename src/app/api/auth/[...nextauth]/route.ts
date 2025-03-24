@@ -7,6 +7,13 @@ import bcrypt from "bcrypt";
 
 const prisma = new PrismaClient();
 
+// Custom error types
+export const AuthError = {
+  EMAIL_NOT_FOUND: "email_not_found",
+  INVALID_PASSWORD: "invalid_password",
+  DEFAULT: "default_error",
+};
+
 // Extend the built-in session types
 declare module "next-auth" {
   interface Session {
@@ -30,7 +37,7 @@ export const authOptions: NextAuthOptions = {
       },
       async authorize(credentials): Promise<User | null> {
         if (!credentials?.email || !credentials?.password) {
-          return null;
+          throw new Error(AuthError.DEFAULT);
         }
 
         const user = await prisma.user.findUnique({
@@ -38,7 +45,7 @@ export const authOptions: NextAuthOptions = {
         });
 
         if (!user) {
-          return null;
+          throw new Error(AuthError.EMAIL_NOT_FOUND);
         }
 
         const isPasswordValid = await bcrypt.compare(
@@ -47,7 +54,7 @@ export const authOptions: NextAuthOptions = {
         );
 
         if (!isPasswordValid) {
-          return null;
+          throw new Error(AuthError.INVALID_PASSWORD);
         }
 
         return {
@@ -79,7 +86,6 @@ export const authOptions: NextAuthOptions = {
         token.email = user.email;
       }
 
-      // If the session was updated, refresh the token data
       if (trigger === "update" && session) {
         token.name = session.user.name;
         token.email = session.user.email;
@@ -96,14 +102,9 @@ export const authOptions: NextAuthOptions = {
       return session;
     },
   },
-  events: {
-    async updateUser({ user }) {
-      // This event is triggered when a user is updated
-      // You can add any additional logic here if needed
-    },
-  },
   pages: {
     signIn: "/login",
+    error: "/login",
   },
 };
 

@@ -3,7 +3,7 @@ import { getServerSession } from "next-auth/next";
 import { authOptions } from "../auth/[...nextauth]/route";
 import prisma from "../../lib/prisma";
 
-// Handle GET requests
+// Handle GET requests - keeping original code unchanged
 export async function GET(request: Request) {
   const session = await getServerSession(authOptions);
   if (!session || !session.user?.email) {
@@ -26,10 +26,15 @@ export async function GET(request: Request) {
         title: true,
         createdAt: true,
         updatedAt: true,
+        lastEditedAt: true,
         dueDate: true,
         priority: true,
         status: true,
-        tags: true,
+        category: true,
+        viewed: true,
+        pinned: true,
+        completed: true,
+        completedAt: true,
       },
       orderBy: { createdAt: "desc" },
     });
@@ -44,14 +49,14 @@ export async function GET(request: Request) {
   }
 }
 
-// Handle POST requests
+// Updated POST request handler with date validation
 export async function POST(request: Request) {
   const session = await getServerSession(authOptions);
   if (!session || !session.user?.email) {
     return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
   }
 
-  const { title, description, dueDate, priority, status, tags } =
+  const { title, description, dueDate, priority, status, category } =
     await request.json();
 
   // Validate required fields
@@ -62,12 +67,18 @@ export async function POST(request: Request) {
     );
   }
 
-  // Validate tags
-  if (tags && !Array.isArray(tags)) {
-    return NextResponse.json(
-      { message: "Tags must be an array" },
-      { status: 400 }
-    );
+  // Validate due date is not in the past
+  if (dueDate) {
+    const dueDateObj = new Date(dueDate);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0); // Set to beginning of today
+
+    if (dueDateObj < today) {
+      return NextResponse.json(
+        { message: "Due date cannot be in the past" },
+        { status: 400 }
+      );
+    }
   }
 
   try {
@@ -86,7 +97,7 @@ export async function POST(request: Request) {
         dueDate: dueDate ? new Date(dueDate) : null,
         priority,
         status,
-        tags: tags || [],
+        category,
         user: { connect: { id: user.id } },
       },
     });
