@@ -6,7 +6,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 
 // Define error messages for different error codes
-const errorMessages = {
+const errorMessages: Record<string, string> = {
   email_not_found:
     "This email is not registered. Please create an account first.",
   invalid_password: "Incorrect password. Please try again.",
@@ -35,9 +35,11 @@ export default function Login() {
     // Handle error message from URL
     const errorType = searchParams.get("error");
     if (errorType) {
+      // Safely handle the error message lookup
       setError(
-        errorMessages[errorType as keyof typeof errorMessages] ||
-          "An error occurred during login."
+        errorType in errorMessages
+          ? errorMessages[errorType]
+          : "An error occurred during login."
       );
     }
   }, [searchParams]);
@@ -56,10 +58,11 @@ export default function Login() {
       });
 
       if (result?.error) {
-        // Map the error code to a user-friendly message
+        // Safely handle the error message lookup
         setError(
-          errorMessages[result.error as keyof typeof errorMessages] ||
-            "Authentication failed. Please try again."
+          result.error in errorMessages
+            ? errorMessages[result.error]
+            : "Authentication failed. Please try again."
         );
       } else {
         router.push("/dashboard");
