@@ -7,8 +7,8 @@ import bcrypt from "bcrypt";
 
 const prisma = new PrismaClient();
 
-// Custom error types
-export const AuthError = {
+// Custom error types - changed to a constant instead of an export
+const AUTH_ERROR = {
   EMAIL_NOT_FOUND: "email_not_found",
   INVALID_PASSWORD: "invalid_password",
   DEFAULT: "default_error",
@@ -37,7 +37,7 @@ export const authOptions: NextAuthOptions = {
       },
       async authorize(credentials): Promise<User | null> {
         if (!credentials?.email || !credentials?.password) {
-          throw new Error(AuthError.DEFAULT);
+          throw new Error(AUTH_ERROR.DEFAULT);
         }
 
         const user = await prisma.user.findUnique({
@@ -45,7 +45,7 @@ export const authOptions: NextAuthOptions = {
         });
 
         if (!user) {
-          throw new Error(AuthError.EMAIL_NOT_FOUND);
+          throw new Error(AUTH_ERROR.EMAIL_NOT_FOUND);
         }
 
         const isPasswordValid = await bcrypt.compare(
@@ -54,7 +54,7 @@ export const authOptions: NextAuthOptions = {
         );
 
         if (!isPasswordValid) {
-          throw new Error(AuthError.INVALID_PASSWORD);
+          throw new Error(AUTH_ERROR.INVALID_PASSWORD);
         }
 
         return {
