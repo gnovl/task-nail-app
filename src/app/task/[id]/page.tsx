@@ -3,7 +3,7 @@
 
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { format } from "date-fns";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useSession } from "next-auth/react";
 import SidebarLayout from "../../_components/SidebarLayout";
 import {
@@ -117,14 +117,7 @@ export default function TaskDetailPage() {
     return format(date, "MMM d, yyyy • h:mm a");
   };
 
-  useEffect(() => {
-    fetchTasks();
-    if (id) {
-      fetchTask();
-    }
-  }, [id]);
-
-  const fetchTasks = async () => {
+  const fetchTasks = useCallback(async () => {
     try {
       const response = await fetch("/api/tasks");
       if (response.ok) {
@@ -136,9 +129,9 @@ export default function TaskDetailPage() {
     } catch (error) {
       console.error("Error fetching tasks:", error);
     }
-  };
+  }, []);
 
-  const fetchTask = async () => {
+  const fetchTask = useCallback(async () => {
     try {
       const response = await fetch(`/api/tasks/${id}`);
       if (response.ok) {
@@ -151,7 +144,14 @@ export default function TaskDetailPage() {
     } catch (error) {
       console.error("Error fetching task:", error);
     }
-  };
+  }, [id]);
+
+  useEffect(() => {
+    fetchTasks();
+    if (id) {
+      fetchTask();
+    }
+  }, [id, fetchTasks, fetchTask]);
 
   const showToast = (message: string, type: "success" | "error") => {
     setToast({ message, type });
@@ -621,11 +621,11 @@ export default function TaskDetailPage() {
               <p className="mb-4">
                 Are you sure you want to delete task{" "}
                 <span className="font-bold truncate block max-w-full">
-                  "
+                  &quot;
                   {task?.title && task.title.length > 40
                     ? task.title.substring(0, 40) + "..."
                     : task?.title}
-                  "
+                  &quot;
                 </span>
                 ? This action cannot be undone.
               </p>

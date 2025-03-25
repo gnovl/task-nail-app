@@ -139,7 +139,7 @@ export default function LoginModal({
         </form>
 
         <p className="mt-6 text-center text-sm text-gray-600">
-          Don't have an account?{" "}
+          Don&apos;t have an account?{" "}
           <button
             onClick={onSwitchToRegister}
             className="text-black font-medium hover:underline focus:outline-none"

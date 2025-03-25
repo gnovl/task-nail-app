@@ -1,7 +1,7 @@
 // src/app/dashboard/page.tsx
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useSession } from "next-auth/react";
 import SidebarLayout from "../_components/SidebarLayout";
 import RecentTasksCard from "../_components/RecentTasksCard";
@@ -48,11 +48,7 @@ export default function Dashboard() {
     return () => clearInterval(timer);
   }, []);
 
-  useEffect(() => {
-    fetchTasks();
-  }, []);
-
-  const fetchTasks = async () => {
+  const fetchTasks = useCallback(async () => {
     try {
       setIsLoadingTasks(true);
       const response = await fetch("/api/tasks");
@@ -69,7 +65,11 @@ export default function Dashboard() {
     } finally {
       setIsLoadingTasks(false);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    fetchTasks();
+  }, [fetchTasks]);
 
   const handleCreateTask = async (taskData: any) => {
     try {

@@ -134,7 +134,7 @@ const TodayOverviewModal: React.FC<TodayOverviewModalProps> = ({
           {/* Header */}
           <div className="flex items-center justify-between p-4 border-b">
             <h2 className="text-lg font-semibold text-gray-900">
-              Today's Overview
+              Today&apos;s Overview
               <span className="block text-sm text-gray-500 font-normal">
                 {format(today, "MMMM d, yyyy")}
               </span>

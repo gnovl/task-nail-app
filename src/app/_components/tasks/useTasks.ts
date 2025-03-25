@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import {
   Task,
   Toast,
@@ -15,11 +15,7 @@ export const useTasks = (initialTasks: Task[]) => {
   const [originalOrder, setOriginalOrder] = useState<Task[]>([]);
   const [toast, setToast] = useState<Toast | null>(null);
 
-  useEffect(() => {
-    fetchTasks();
-  }, []);
-
-  const fetchTasks = async () => {
+  const fetchTasks = useCallback(async () => {
     try {
       setLoading(true);
       const response = await fetch("/api/tasks");
@@ -37,7 +33,11 @@ export const useTasks = (initialTasks: Task[]) => {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    fetchTasks();
+  }, [fetchTasks]);
 
   const showToast = (
     message: string,
@@ -237,97 +237,105 @@ export const useTaskFiltering = (tasks: Task[]) => {
     setTitleSortDirection((prev) => (prev === "asc" ? "desc" : "asc"));
   };
 
-  const applyFilters = (tasksToFilter: Task[]) => {
-    const today = new Date();
-    const todayStart = startOfDay(today);
+  const applyFilters = useCallback(
+    (tasksToFilter: Task[]) => {
+      const today = new Date();
+      const todayStart = startOfDay(today);
 
-    switch (currentFilter) {
-      case "overdue":
-        return tasksToFilter.filter(
-          (task) =>
-            task.dueDate &&
-            isBefore(new Date(task.dueDate), todayStart) &&
-            task.status !== "Completed"
-        );
-      case "dueToday":
-        return tasksToFilter.filter(
-          (task) =>
-            task.dueDate &&
-            isToday(new Date(task.dueDate)) &&
-            task.status !== "Completed"
-        );
-      case "dueTomorrow":
-        return tasksToFilter.filter(
-          (task) =>
-            task.dueDate &&
-            isTomorrow(new Date(task.dueDate)) &&
-            task.status !== "Completed"
-        );
-      case "completed":
-        return tasksToFilter.filter((task) => task.status === "Completed");
-      case "notStarted":
-        return tasksToFilter.filter((task) => task.status === "Not Started");
-      case "inProgress":
-        return tasksToFilter.filter((task) => task.status === "In Progress");
-      case "all":
-      default:
-        return tasksToFilter;
-    }
-  };
-
-  const sortTasks = (tasksToSort: Task[], option: SortOption) => {
-    return [...tasksToSort].sort((a, b) => {
-      switch (option) {
-        case "pinned":
-          return a.pinned === b.pinned ? 0 : a.pinned ? -1 : 1;
-        case "dueDate":
-          if (!a.dueDate && !b.dueDate) return 0;
-          if (!a.dueDate) return 1;
-          if (!b.dueDate) return -1;
-          return new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime();
-        case "priority":
-          const priorityOrder = { High: 3, Medium: 2, Low: 1, null: 0 };
-          return (
-            (priorityOrder[b.priority as keyof typeof priorityOrder] || 0) -
-            (priorityOrder[a.priority as keyof typeof priorityOrder] || 0)
+      switch (currentFilter) {
+        case "overdue":
+          return tasksToFilter.filter(
+            (task) =>
+              task.dueDate &&
+              isBefore(new Date(task.dueDate), todayStart) &&
+              task.status !== "Completed"
           );
-        case "createdAt":
-          return (
-            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+        case "dueToday":
+          return tasksToFilter.filter(
+            (task) =>
+              task.dueDate &&
+              isToday(new Date(task.dueDate)) &&
+              task.status !== "Completed"
           );
-        case "updatedAt":
-          const bDate = b.lastEditedAt
-            ? new Date(b.lastEditedAt)
-            : new Date(b.updatedAt);
-          const aDate = a.lastEditedAt
-            ? new Date(a.lastEditedAt)
-            : new Date(a.updatedAt);
-          return bDate.getTime() - aDate.getTime();
-        case "status":
-          const statusOrder = {
-            Completed: 3,
-            "In Progress": 2,
-            "Not Started": 1,
-          };
-          return (
-            (statusOrder[b.status as keyof typeof statusOrder] || 0) -
-            (statusOrder[a.status as keyof typeof statusOrder] || 0)
+        case "dueTomorrow":
+          return tasksToFilter.filter(
+            (task) =>
+              task.dueDate &&
+              isTomorrow(new Date(task.dueDate)) &&
+              task.status !== "Completed"
           );
-        case "title":
-          // Apply sort direction
-          return titleSortDirection === "asc"
-            ? a.title.localeCompare(b.title)
-            : b.title.localeCompare(a.title);
-        case "category":
-          if (!a.category && !b.category) return 0;
-          if (!a.category) return 1;
-          if (!b.category) return -1;
-          return a.category.localeCompare(b.category);
+        case "completed":
+          return tasksToFilter.filter((task) => task.status === "Completed");
+        case "notStarted":
+          return tasksToFilter.filter((task) => task.status === "Not Started");
+        case "inProgress":
+          return tasksToFilter.filter((task) => task.status === "In Progress");
+        case "all":
         default:
-          return 0;
+          return tasksToFilter;
       }
-    });
-  };
+    },
+    [currentFilter]
+  );
+
+  const sortTasks = useCallback(
+    (tasksToSort: Task[], option: SortOption) => {
+      return [...tasksToSort].sort((a, b) => {
+        switch (option) {
+          case "pinned":
+            return a.pinned === b.pinned ? 0 : a.pinned ? -1 : 1;
+          case "dueDate":
+            if (!a.dueDate && !b.dueDate) return 0;
+            if (!a.dueDate) return 1;
+            if (!b.dueDate) return -1;
+            return (
+              new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime()
+            );
+          case "priority":
+            const priorityOrder = { High: 3, Medium: 2, Low: 1, null: 0 };
+            return (
+              (priorityOrder[b.priority as keyof typeof priorityOrder] || 0) -
+              (priorityOrder[a.priority as keyof typeof priorityOrder] || 0)
+            );
+          case "createdAt":
+            return (
+              new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+            );
+          case "updatedAt":
+            const bDate = b.lastEditedAt
+              ? new Date(b.lastEditedAt)
+              : new Date(b.updatedAt);
+            const aDate = a.lastEditedAt
+              ? new Date(a.lastEditedAt)
+              : new Date(a.updatedAt);
+            return bDate.getTime() - aDate.getTime();
+          case "status":
+            const statusOrder = {
+              Completed: 3,
+              "In Progress": 2,
+              "Not Started": 1,
+            };
+            return (
+              (statusOrder[b.status as keyof typeof statusOrder] || 0) -
+              (statusOrder[a.status as keyof typeof statusOrder] || 0)
+            );
+          case "title":
+            // Apply sort direction
+            return titleSortDirection === "asc"
+              ? a.title.localeCompare(b.title)
+              : b.title.localeCompare(a.title);
+          case "category":
+            if (!a.category && !b.category) return 0;
+            if (!a.category) return 1;
+            if (!b.category) return -1;
+            return a.category.localeCompare(b.category);
+          default:
+            return 0;
+        }
+      });
+    },
+    [titleSortDirection]
+  );
 
   useEffect(() => {
     let result = applyFilters([...tasks]);
@@ -350,7 +358,14 @@ export const useTaskFiltering = (tasks: Task[]) => {
     }
 
     setFilteredTasks(result);
-  }, [tasks, currentFilter, currentSort, titleSortDirection]);
+  }, [
+    tasks,
+    currentFilter,
+    currentSort,
+    titleSortDirection,
+    applyFilters,
+    sortTasks,
+  ]);
 
   const getFilterCounts = () => {
     const today = new Date();
