@@ -11,6 +11,18 @@ import { ArrowLeft } from "lucide-react";
 interface Task {
   id: string;
   title: string;
+  description: string | null;
+  createdAt: string;
+  updatedAt: string;
+  dueDate: string | null;
+  priority: "High" | "Medium" | "Low" | null;
+  status: string;
+  category: string | null;
+  completed: boolean;
+  estimatedTime: number | null;
+  viewed: boolean;
+  isNew?: boolean;
+  pinned: boolean;
 }
 
 interface User {
