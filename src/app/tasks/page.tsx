@@ -2,7 +2,7 @@ import React from "react";
 import TasksComponent from "../_components/TasksList";
 import SidebarLayout from "../_components/SidebarLayout";
 import { getServerSession } from "next-auth/next";
-import { authOptions } from "../api/auth/[...nextauth]/route";
+import { authOptions } from "@/app/api/auth/[...nextauth]/options";
 import prisma from "../lib/prisma";
 import { TaskCategory } from "@prisma/client";
 
