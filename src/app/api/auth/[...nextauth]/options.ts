@@ -70,6 +70,20 @@ export const authOptions: NextAuthOptions = {
   ],
   session: {
     strategy: "jwt",
+    maxAge: 30 * 24 * 60 * 60,
+  },
+  cookies: {
+    sessionToken: {
+      name: `__Secure-next-auth.session-token`,
+      options: {
+        httpOnly: true,
+        sameSite: "lax",
+        path: "/",
+        secure: true,
+        domain:
+          process.env.NODE_ENV === "production" ? ".tasknail.com" : undefined,
+      },
+    },
   },
   callbacks: {
     async jwt({

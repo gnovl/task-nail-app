@@ -58,6 +58,14 @@ export default function SidebarLayout({
   const [isOpen, setOpen] = useState(false);
   const [isQuickTaskModalOpen, setIsQuickTaskModalOpen] = useState(false);
   const [selectedDate, setSelectedDate] = useState<Date | null>(new Date());
+
+  useEffect(() => {
+    // If unauthenticated and not already on login page, redirect once
+    if (status === "unauthenticated" && window.location.pathname !== "/login") {
+      router.push("/login");
+    }
+  }, [status, router]);
+
   const [toast, setToast] = useState<{
     type: "success" | "error";
     message: string;
