@@ -7,6 +7,7 @@ import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcrypt";
 
 const prisma = new PrismaClient();
+const secret = process.env.NEXTAUTH_SECRET;
 
 // Custom error types
 const AUTH_ERROR = {
@@ -29,6 +30,7 @@ declare module "next-auth" {
 
 export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(prisma),
+  secret: secret,
   providers: [
     CredentialsProvider({
       name: "Credentials",

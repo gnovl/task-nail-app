@@ -28,6 +28,8 @@ jobs:
       - run: npm run build --if-present
       - name: Run Prisma migrations
         run: npx prisma migrate deploy
+      - name: Copy environment variables to production directory
+        run: cp .env /home/gino/actions-runner/_work/task-nail-app/task-nail-app/.env
       - name: Change Directory
         run: cd /home/gino/actions-runner/_work/task-nail-app/task-nail-app
       - run: pm2 restart 0
