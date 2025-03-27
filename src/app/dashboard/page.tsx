@@ -7,6 +7,7 @@ import SidebarLayout from "../_components/SidebarLayout";
 import RecentTasksCard from "../_components/RecentTasksCard";
 import DashboardQuickActions from "../_components/DashboardQuickActions";
 import TodayTasks from "../_components/TodayTasks";
+import dynamic from "next/dynamic";
 import { format } from "date-fns";
 import { PulseLoader } from "react-spinners";
 
@@ -26,6 +27,17 @@ export interface Task {
   isNew?: boolean;
   pinned: boolean;
 }
+
+// Make the time display component client-only
+const ClientTimeDisplay = dynamic(
+  () =>
+    Promise.resolve(({ currentTime }: { currentTime: Date }) => (
+      <p className="text-sm sm:text-base text-gray-600">
+        {format(currentTime, "EEEE, MMMM d • HH:mm")}
+      </p>
+    )),
+  { ssr: false }
+);
 
 export default function Dashboard() {
   const [tasks, setTasks] = useState<Task[]>([]);
@@ -141,9 +153,7 @@ export default function Dashboard() {
               </span>
             )}
           </div>
-          <p className="text-sm sm:text-base text-gray-600 mt-2 sm:mt-0">
-            {format(currentTime, "EEEE, MMMM d • HH:mm")}
-          </p>
+          <ClientTimeDisplay currentTime={currentTime} />
         </div>
         {/* Quick Actions & Calendar */}
         <DashboardQuickActions
