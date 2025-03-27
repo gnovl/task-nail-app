@@ -1,22 +1,17 @@
 name: Node.js CI
-
 on:
   push:
     branches: ["main"]
   pull_request:
     branches: ["main"]
-
 jobs:
   build:
     runs-on: self-hosted
-
     strategy:
       matrix:
         node-version: [22.14.0]
-
     env:
       NEXT_WEBSITE_URL: ${{secrets.NEXT_WEBSITE_URL}}
-
     steps:
       - uses: actions/checkout@v4
       - name: Use Node.js ${{ matrix.node-version }}
@@ -24,8 +19,15 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
           cache: "npm"
+      - name: Setup environment variables
+        run: |
+          echo "DATABASE_URL=${{ secrets.DATABASE_URL }}" >> .env
+          echo "NEXTAUTH_SECRET=${{ secrets.NEXTAUTH_SECRET }}" >> .env
+          echo "NEXTAUTH_URL=${{ secrets.NEXT_WEBSITE_URL }}" >> .env
       - run: npm ci
       - run: npm run build --if-present
+      - name: Run Prisma migrations
+        run: npx prisma migrate deploy
       - name: Change Directory
         run: cd /home/gino/actions-runner/_work/task-nail-app/task-nail-app
       - run: pm2 restart 0
