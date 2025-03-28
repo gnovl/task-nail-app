@@ -128,16 +128,6 @@ export default function SidebarLayout({
 
   return (
     <div className="flex h-screen bg-gray-50">
-      {/* Mobile hamburger - aligned with header content */}
-      <div className="lg:hidden fixed left-4 top-1 z-50">
-        <Hamburger
-          toggled={isOpen}
-          toggle={setOpen}
-          size={20}
-          color="#4B5563"
-        />
-      </div>
-
       {/* Mobile overlay */}
       {isOpen && (
         <div
@@ -153,7 +143,7 @@ export default function SidebarLayout({
         } w-60 h-screen bg-white shadow-sm flex flex-col z-50`}
       >
         {/* Logo area */}
-        <div className="p-4 mt-14 lg:mt-0">
+        <div className="p-4">
           <h2 className="text-lg font-semibold text-gray-900">TaskNail</h2>
         </div>
 
@@ -263,8 +253,28 @@ export default function SidebarLayout({
         </div>
       </div>
 
-      {/* Main content */}
-      <div className="flex-1 overflow-auto lg:ml-0 ml-0 pb-8">{children}</div>
+      {/* Main content with header and hamburger */}
+      <div className="flex-1 overflow-auto lg:ml-0 ml-0 pb-8 flex flex-col">
+        {/* Mobile header with hamburger - made sticky */}
+        <div className="sticky top-0 z-40 bg-white lg:hidden border-b border-gray-200 shadow-sm">
+          <div className="py-3 px-4 flex items-center justify-between">
+            <div className="flex items-center">
+              <Hamburger
+                toggled={isOpen}
+                toggle={setOpen}
+                size={20}
+                color="#4B5563"
+              />
+              <span className="ml-3 text-base font-medium text-gray-900">
+                TaskNail
+              </span>
+            </div>
+          </div>
+        </div>
+
+        {/* Page content */}
+        <div className="flex-grow">{children}</div>
+      </div>
 
       {/* QuickTaskModal for the sidebar "Create New Task" button */}
       <QuickTaskModal

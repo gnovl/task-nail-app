@@ -32,7 +32,7 @@ export interface Task {
 const ClientTimeDisplay = dynamic(
   () =>
     Promise.resolve(({ currentTime }: { currentTime: Date }) => (
-      <p className="text-sm sm:text-base text-gray-600">
+      <p className="text-sm text-gray-600">
         {format(currentTime, "EEEE, MMMM d • HH:mm")}
       </p>
     )),
@@ -136,9 +136,9 @@ export default function Dashboard() {
       isAddTaskPage={true}
       onTaskCreated={handleTaskCreated}
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4 sm:pt-6">
         {/* Header */}
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 sm:mb-6">
           <div className="flex items-center gap-1.5">
             <span className="text-base sm:text-lg text-gray-500">
               Welcome back,
@@ -153,7 +153,9 @@ export default function Dashboard() {
               </span>
             )}
           </div>
-          <ClientTimeDisplay currentTime={currentTime} />
+          <div className="mt-1 sm:mt-0">
+            <ClientTimeDisplay currentTime={currentTime} />
+          </div>
         </div>
         {/* Quick Actions & Calendar */}
         <DashboardQuickActions

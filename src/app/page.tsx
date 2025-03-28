@@ -111,13 +111,13 @@ export default function Home() {
               <div className="mt-10 mx-auto max-w-7xl px-4 sm:mt-12 sm:px-6 md:mt-16 lg:mt-20 lg:px-8 xl:mt-28">
                 <div className="sm:text-center lg:text-left">
                   <h1 className="text-4xl tracking-tight font-extrabold text-gray-900 sm:text-5xl md:text-6xl">
-                    <span className="block">The simplest way to</span>
-                    <span className="block text-black">manage your tasks</span>
+                    <span className="block">Effortlessly manage</span>
+                    <span className="block text-black">your daily tasks</span>
                   </h1>
                   <p className="mt-3 text-base text-gray-500 sm:mt-5 sm:text-lg sm:max-w-xl sm:mx-auto md:mt-5 md:text-xl lg:mx-0">
-                    TaskNail helps you organize your work and life with a clean,
-                    intuitive interface. Stay on top of deadlines, visualize
-                    your tasks, and boost your productivity—all for free.
+                    TaskNail helps you organize your work with a clean,
+                    intuitive interface. Stay productive and never miss a
+                    deadline again.
                   </p>
 
                   {/* Feature highlights */}
@@ -140,9 +140,10 @@ export default function Home() {
                     ))}
                   </div>
 
-                  {/* CTA buttons */}
+                  {/* CTA buttons - Modified for mobile */}
                   <div className="mt-8 sm:flex sm:justify-center lg:justify-start">
-                    <div className="rounded-md shadow">
+                    {/* Desktop CTA buttons */}
+                    <div className="hidden sm:block rounded-md shadow">
                       <button
                         onClick={handleGetStarted}
                         className="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-white bg-black hover:bg-gray-800 md:py-4 md:text-lg md:px-10 transition-colors"
@@ -154,12 +155,32 @@ export default function Home() {
                         />
                       </button>
                     </div>
-                    <div className="mt-3 sm:mt-0 sm:ml-3">
+                    <div className="hidden sm:block sm:mt-0 sm:ml-3">
                       <button
                         onClick={handleRegister}
                         className="w-full flex items-center justify-center px-8 py-3 border border-gray-300 text-base font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 md:py-4 md:text-lg md:px-10 transition-colors"
                       >
                         Register
+                      </button>
+                    </div>
+
+                    {/* Mobile CTA buttons - Full width and stacked */}
+                    <div className="sm:hidden w-full flex flex-col space-y-3">
+                      <button
+                        onClick={handleGetStarted}
+                        className="w-full flex items-center justify-center px-6 py-3 bg-black text-white text-base font-medium rounded-md hover:bg-gray-800 transition-colors"
+                      >
+                        Log In
+                        <ArrowRightIcon
+                          className="ml-2 -mr-1 h-5 w-5"
+                          aria-hidden="true"
+                        />
+                      </button>
+                      <button
+                        onClick={handleRegister}
+                        className="w-full flex items-center justify-center px-6 py-3 border border-black text-base font-medium rounded-md text-black bg-white hover:bg-gray-50 transition-colors"
+                      >
+                        Create Account
                       </button>
                     </div>
                   </div>
@@ -181,20 +202,20 @@ export default function Home() {
       </main>
 
       {/* Footer */}
-      <footer className="w-full py-6 px-4 bg-white border-t border-gray-100">
+      <footer className="w-full py-4 px-4 bg-white border-t border-gray-100">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center">
-          <div className="mb-4 md:mb-0">
-            <p className="text-base font-medium text-gray-900">TaskNail</p>
-            <p className="text-sm text-gray-500">
+          <div className="mb-2 md:mb-0 text-center md:text-left">
+            <p className="text-sm font-medium text-gray-900">TaskNail</p>
+            <p className="text-xs text-gray-500">
               © 2025 TaskNail. All rights reserved.
             </p>
           </div>
-          <div className="flex space-x-4 text-sm text-gray-500">
+          <div className="flex space-x-3 md:space-x-4 text-xs text-gray-500">
             <a href="#" className="hover:text-gray-700">
-              Privacy Policy
+              Privacy
             </a>
             <a href="#" className="hover:text-gray-700">
-              Terms of Service
+              Terms
             </a>
             <a href="#" className="hover:text-gray-700">
               Contact

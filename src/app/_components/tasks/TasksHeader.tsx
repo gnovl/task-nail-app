@@ -1,6 +1,4 @@
 // src/app/_components/tasks/TasksHeader.tsx
-// Focus on fixing the positioning of the hamburger and mobile toggle menus
-
 import React from "react";
 import { useRouter } from "next/navigation";
 import {
@@ -10,7 +8,9 @@ import {
   SlidersHorizontal,
   ArrowUpDown,
   Trash,
-  Menu,
+  Filter,
+  List,
+  Grid,
 } from "lucide-react";
 import { FilterOption, SortOption } from "./TasksTypes";
 
@@ -58,9 +58,8 @@ const TasksHeader: React.FC<TasksHeaderProps> = ({
         <div className="flex flex-col gap-4">
           {/* Top Row with Action Buttons */}
           <div className="flex items-center justify-between w-full">
-            {/* Hamburger menu is handled by SidebarLayout component */}
+            {/* Back button - visible only on desktop */}
             <div className="sm:block">
-              {/* Back button - visible only on desktop */}
               <button
                 onClick={() => router.push("/dashboard")}
                 className="hidden sm:flex items-center text-gray-600 hover:text-gray-900 transition-colors"
@@ -114,10 +113,14 @@ const TasksHeader: React.FC<TasksHeaderProps> = ({
                 <div className="sm:hidden">
                   <button
                     onClick={() => setShowMobileMenu(!showMobileMenu)}
-                    className="p-1 rounded-md bg-gray-100 text-gray-700"
-                    aria-label="Toggle mobile menu"
+                    className={`flex items-center justify-center w-8 h-8 rounded-md ${
+                      showMobileMenu
+                        ? "bg-gray-700 text-white"
+                        : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                    } transition-colors`}
+                    aria-label="Toggle filters menu"
                   >
-                    <Menu className="w-5 h-5" />
+                    <Filter className="w-4 h-4" />
                   </button>
                 </div>
 
@@ -192,23 +195,24 @@ const TasksHeader: React.FC<TasksHeaderProps> = ({
             )}
           </div>
 
-          {/* Mobile Menu - Shown only on small screens */}
+          {/* Mobile Menu - Shown only on small screens with improved buttons */}
           {showMobileMenu && !selectionMode && (
-            <div className="sm:hidden flex flex-wrap gap-2 pt-1 pb-1">
+            <div className="sm:hidden flex flex-wrap gap-2 pt-1 pb-2">
+              {/* Filter Button */}
               <button
                 onClick={() => {
                   setShowFilters(!showFilters);
                   setShowMobileMenu(false);
                   if (showSorts) setShowSorts(false);
                 }}
-                className={`flex items-center gap-1 px-2 py-1.5 ${
+                className={`flex items-center gap-1 px-3 py-2 rounded-full text-xs font-medium transition-colors ${
                   showFilters || currentFilter !== "all"
-                    ? "bg-gray-700 text-white"
+                    ? "bg-gray-800 text-white"
                     : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-                } rounded-md transition-colors text-xs`}
+                }`}
               >
-                <SlidersHorizontal className="w-3 h-3" />
-                <span>{currentFilter === "all" ? "Filter" : "Filtered"}</span>
+                <SlidersHorizontal className="w-3.5 h-3.5 mr-1" />
+                {currentFilter === "all" ? "Filter" : "Filtered"}
                 {currentFilter !== "all" && (
                   <span className="ml-1 px-1.5 py-0.5 text-xs bg-white text-gray-800 rounded-full">
                     1
@@ -216,20 +220,21 @@ const TasksHeader: React.FC<TasksHeaderProps> = ({
                 )}
               </button>
 
+              {/* Sort Button */}
               <button
                 onClick={() => {
                   setShowSorts(!showSorts);
                   setShowMobileMenu(false);
                   if (showFilters) setShowFilters(false);
                 }}
-                className={`flex items-center gap-1 px-2 py-1.5 ${
+                className={`flex items-center gap-1 px-3 py-2 rounded-full text-xs font-medium transition-colors ${
                   showSorts || currentSort
-                    ? "bg-gray-700 text-white"
+                    ? "bg-gray-800 text-white"
                     : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-                } rounded-md transition-colors text-xs`}
+                }`}
               >
-                <ArrowUpDown className="w-3 h-3" />
-                <span>{currentSort ? "Sorted" : "Sort"}</span>
+                <ArrowUpDown className="w-3.5 h-3.5 mr-1" />
+                {currentSort ? "Sorted" : "Sort"}
                 {currentSort && (
                   <span className="ml-1 px-1.5 py-0.5 text-xs bg-white text-gray-800 rounded-full">
                     1
@@ -237,28 +242,39 @@ const TasksHeader: React.FC<TasksHeaderProps> = ({
                 )}
               </button>
 
+              {/* View Toggle Button */}
               <button
                 onClick={() => {
                   toggleViewMode();
                   setShowMobileMenu(false);
                 }}
-                className="flex items-center gap-1 px-2 py-1.5 bg-gray-100 rounded-md hover:bg-gray-200 transition-colors text-xs text-gray-700"
+                className="flex items-center gap-1 px-3 py-2 bg-gray-100 rounded-full hover:bg-gray-200 transition-colors text-xs font-medium text-gray-700"
                 title={`Switch to ${
                   viewMode === "grid" ? "list" : "grid"
                 } view`}
               >
-                <Columns className="w-3 h-3" />
-                <span>{viewMode === "grid" ? "List" : "Grid"}</span>
+                {viewMode === "grid" ? (
+                  <>
+                    <List className="w-3.5 h-3.5 mr-1" />
+                    List View
+                  </>
+                ) : (
+                  <>
+                    <Grid className="w-3.5 h-3.5 mr-1" />
+                    Grid View
+                  </>
+                )}
               </button>
 
+              {/* Select Button */}
               <button
                 onClick={() => {
                   setSelectionMode(true);
                   setShowMobileMenu(false);
                 }}
-                className="px-2 py-1.5 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 transition-colors flex items-center gap-1 text-xs"
+                className="flex items-center gap-1 px-3 py-2 bg-gray-100 text-gray-700 rounded-full hover:bg-gray-200 transition-colors text-xs font-medium"
               >
-                <Check className="w-3 h-3" />
+                <Check className="w-3.5 h-3.5 mr-1" />
                 Select
               </button>
             </div>

@@ -53,16 +53,19 @@ export default function LoginModal({
       });
 
       if (result?.error) {
-        // Map the error code to a user-friendly message
+        console.error("Authentication error:", result.error);
         setError(
           errorMessages[result.error as keyof typeof errorMessages] ||
             "Authentication failed. Please try again."
         );
       } else {
         onClose();
-        router.push("/dashboard");
+        setTimeout(() => {
+          window.location.href = "/dashboard";
+        }, 100);
       }
     } catch (err) {
+      console.error("Unexpected error during login:", err);
       setError("Something went wrong. Please try again.");
     } finally {
       setIsLoading(false);
