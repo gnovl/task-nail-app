@@ -253,21 +253,29 @@ export default function SidebarLayout({
         </div>
       </div>
 
-      {/* Main content with header and hamburger */}
       <div className="flex-1 overflow-auto lg:ml-0 ml-0 pb-8 flex flex-col">
-        {/* Mobile header with hamburger - made sticky */}
-        <div className="sticky top-0 z-40 bg-white lg:hidden border-b border-gray-200 shadow-sm">
-          <div className="py-3 px-4 flex items-center justify-between">
-            <div className="flex items-center">
+        {/* Mobile header with hamburger - made sticky and hidden on tasks page */}
+        <div
+          className={`sticky top-0 z-40 bg-white lg:hidden border-b border-gray-200 shadow-sm ${
+            isTasksPage ? "hidden" : ""
+          }`}
+        >
+          <div className="py-3 px-4 flex items-center">
+            <div className="flex-1 flex items-center">
               <Hamburger
                 toggled={isOpen}
                 toggle={setOpen}
                 size={20}
                 color="#4B5563"
               />
-              <span className="ml-3 text-base font-medium text-gray-900">
+            </div>
+            <div className="flex-1 text-center">
+              <span className="text-base font-medium text-gray-900">
                 TaskNail
               </span>
+            </div>
+            <div className="flex-1">
+              {/* Empty div to balance the layout */}
             </div>
           </div>
         </div>

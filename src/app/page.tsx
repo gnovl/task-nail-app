@@ -211,13 +211,18 @@ export default function Home() {
             </p>
           </div>
           <div className="flex space-x-3 md:space-x-4 text-xs text-gray-500">
-            <a href="#" className="hover:text-gray-700">
+            <Link href="/privacy" className="hover:text-gray-700">
               Privacy
-            </a>
-            <a href="#" className="hover:text-gray-700">
+            </Link>
+            <Link href="/terms" className="hover:text-gray-700">
               Terms
-            </a>
-            <a href="#" className="hover:text-gray-700">
+            </Link>
+            <a
+              href="https://github.com/gnovl"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-gray-700"
+            >
               Contact
             </a>
           </div>

@@ -58,11 +58,63 @@ const TasksHeader: React.FC<TasksHeaderProps> = ({
         <div className="flex flex-col gap-4">
           {/* Top Row with Action Buttons */}
           <div className="flex items-center justify-between w-full">
-            {/* Back button - visible only on desktop */}
-            <div className="sm:block">
+            {/* Mobile Header with Back Button, App Title, and Filter Button */}
+            <div className="flex items-center justify-between w-full sm:hidden">
               <button
                 onClick={() => router.push("/dashboard")}
-                className="hidden sm:flex items-center text-gray-600 hover:text-gray-900 transition-colors"
+                className="p-1.5 text-gray-600 hover:text-gray-900 transition-colors"
+                aria-label="Back to Dashboard"
+              >
+                <ArrowLeft className="h-5 w-5" />
+              </button>
+
+              <h1 className="text-lg font-medium text-gray-900">TaskNail</h1>
+
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => {
+                    setShowMobileMenu(!showMobileMenu);
+                    if (showMobileMenu) {
+                      setShowFilters(false);
+                      setShowSorts(false);
+                    }
+                  }}
+                  className={`flex items-center justify-center w-8 h-8 rounded-md ${
+                    showMobileMenu ||
+                    showFilters ||
+                    showSorts ||
+                    currentFilter !== "all" ||
+                    currentSort
+                      ? "bg-gray-700 text-white"
+                      : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                  } transition-colors`}
+                  aria-label="Toggle filters menu"
+                >
+                  <Filter className="w-4 h-4" />
+                </button>
+
+                {selectionMode && (
+                  <button
+                    onClick={openDeleteModal}
+                    disabled={selectedTasks.length === 0}
+                    className={`w-8 h-8 flex items-center justify-center rounded-md transition-colors
+                      ${
+                        selectedTasks.length === 0
+                          ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                          : "bg-gray-900 text-white hover:bg-gray-800"
+                      }`}
+                  >
+                    <Trash className="w-4 h-4" />
+                  </button>
+                )}
+              </div>
+            </div>
+
+            {/* Back button - visible only on desktop */}
+            <div className="hidden sm:block">
+              <button
+                onClick={() => router.push("/dashboard")}
+                className="flex items-center text-gray-600 hover:text-gray-900 transition-colors"
               >
                 <ArrowLeft className="h-6 w-6 mr-2" />
                 <span className="text-sm font-medium">Back to Dashboard</span>
@@ -71,7 +123,7 @@ const TasksHeader: React.FC<TasksHeaderProps> = ({
 
             {/* Selection Mode Controls - Responsive */}
             {selectionMode ? (
-              <div className="flex flex-wrap items-center gap-1 sm:gap-2">
+              <div className="hidden sm:flex flex-wrap items-center gap-1 sm:gap-2">
                 <div className="flex items-center bg-gray-100 px-2 sm:px-3 py-1 sm:py-1.5 rounded-md text-xs sm:text-sm">
                   <Check className="w-3 h-3 sm:w-4 sm:h-4 text-green-500 mr-1 sm:mr-2" />
                   <span className="whitespace-nowrap">
@@ -108,24 +160,8 @@ const TasksHeader: React.FC<TasksHeaderProps> = ({
                 </div>
               </div>
             ) : (
-              <div className="flex items-center">
-                {/* Mobile Menu Toggle Button - positioned on the right */}
-                <div className="sm:hidden">
-                  <button
-                    onClick={() => setShowMobileMenu(!showMobileMenu)}
-                    className={`flex items-center justify-center w-8 h-8 rounded-md ${
-                      showMobileMenu
-                        ? "bg-gray-700 text-white"
-                        : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-                    } transition-colors`}
-                    aria-label="Toggle filters menu"
-                  >
-                    <Filter className="w-4 h-4" />
-                  </button>
-                </div>
-
-                {/* Desktop Controls - Unchanged */}
-                <div className="hidden sm:flex items-center gap-2">
+              <div className="hidden sm:flex items-center">
+                <div className="flex items-center gap-2">
                   <button
                     onClick={() => {
                       setShowFilters(!showFilters);
@@ -194,6 +230,33 @@ const TasksHeader: React.FC<TasksHeaderProps> = ({
               </div>
             )}
           </div>
+
+          {/* Selection toolbar for mobile */}
+          {selectionMode && (
+            <div className="flex items-center justify-between sm:hidden">
+              <div className="flex items-center bg-gray-100 px-2 py-1 rounded-md text-xs">
+                <Check className="w-3 h-3 text-green-500 mr-1" />
+                <span className="whitespace-nowrap">
+                  {selectedTasks.length}{" "}
+                  {selectedTasks.length === 1 ? "task" : "tasks"}
+                </span>
+              </div>
+              <div className="flex gap-1">
+                <button
+                  onClick={selectAllTasks}
+                  className="px-2 py-1 bg-black text-white rounded-md hover:bg-gray-800 transition-colors text-xs"
+                >
+                  All
+                </button>
+                <button
+                  onClick={clearSelection}
+                  className="px-2 py-1 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 transition-colors text-xs"
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          )}
 
           {/* Mobile Menu - Shown only on small screens with improved buttons */}
           {showMobileMenu && !selectionMode && (

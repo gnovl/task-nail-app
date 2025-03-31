@@ -8,6 +8,9 @@ import {
   isSameMonth,
   isToday,
   isSameDay,
+  addDays,
+  startOfWeek,
+  endOfWeek,
 } from "date-fns";
 import {
   ChevronLeftIcon,
@@ -47,7 +50,6 @@ const TaskCalendar: React.FC<TaskCalendarProps> = ({
 
   const startDate = startOfMonth(currentDate);
   const endDate = endOfMonth(currentDate);
-  const daysInMonth = eachDayOfInterval({ start: startDate, end: endDate });
   const [clickedDate, setClickedDate] = useState<Date | null>(null);
   const [showPreviewTooltip, setShowPreviewTooltip] = useState(false);
 
@@ -55,6 +57,15 @@ const TaskCalendar: React.FC<TaskCalendarProps> = ({
   const calendarRef = useRef<HTMLDivElement>(null);
   // Add ref for the preview container
   const previewRef = useRef<HTMLDivElement>(null);
+
+  // Get days with correct week start
+  const getCalendarDays = () => {
+    const start = startOfWeek(startDate);
+    const end = endOfWeek(endDate);
+    return eachDayOfInterval({ start, end });
+  };
+
+  const calendarDays = getCalendarDays();
 
   useEffect(() => {
     // Handler for click outside
@@ -108,13 +119,16 @@ const TaskCalendar: React.FC<TaskCalendarProps> = ({
   };
 
   // Calculate preview position
-  const getPreviewPosition = (index: number) => {
-    const dayPosition = index % 7; // 0 to 6, representing Sunday to Saturday
-    const weekRow = Math.floor(index / 7); // 0 to 4/5, representing the week
+  const getPreviewPosition = (date: Date) => {
+    const dayIndex = calendarDays.findIndex((day) => isSameDay(day, date));
+    const dayPosition = dayIndex % 7; // 0 to 6, representing Sunday to Saturday
+    const weekRow = Math.floor(dayIndex / 7); // Week row in the calendar
+    const totalWeeks = Math.ceil(calendarDays.length / 7);
+
     const isLastTwoColumns = dayPosition >= 5; // Friday or Saturday
     const isFirstTwoColumns = dayPosition <= 1; // Sunday or Monday
     const isFirstRow = weekRow === 0;
-    const isLastRow = weekRow >= 4; // Assuming a standard month view
+    const isLastRow = weekRow === totalWeeks - 1;
 
     if (isLastTwoColumns) {
       // For dates in the last two columns (Fri, Sat), show preview on the left
@@ -275,7 +289,7 @@ const TaskCalendar: React.FC<TaskCalendarProps> = ({
 
             {/* Calendar Days */}
             <div className="grid grid-cols-7 gap-1">
-              {daysInMonth.map((date, index) => {
+              {calendarDays.map((date) => {
                 const dayTasks = getTasksForDate(date);
                 const isCurrentMonth = isSameMonth(date, currentDate);
                 const isCurrentDay = isToday(date);
@@ -335,9 +349,7 @@ const TaskCalendar: React.FC<TaskCalendarProps> = ({
                       hasTasksForDay && (
                         <div
                           ref={previewRef}
-                          className={`absolute z-20 ${getPreviewPosition(
-                            index
-                          )} 
+                          className={`absolute z-20 ${getPreviewPosition(date)} 
                           bg-white rounded-lg shadow-lg p-2 w-56 text-left border border-gray-200`}
                           onClick={(e) => e.stopPropagation()}
                         >
