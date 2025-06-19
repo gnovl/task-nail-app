@@ -1,0 +1,23 @@
+{
+  "name": "TaskNail",
+  "short_name": "TaskNail",
+  "description": "Task management solution - Productivity, simplified",
+  "start_url": "/",
+  "icons": [
+    {
+      "src": "/icon1.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/apple-icon.png",
+      "sizes": "180x180",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ],
+  "theme_color": "#000000",
+  "background_color": "#ffffff",
+  "display": "standalone"
+}
