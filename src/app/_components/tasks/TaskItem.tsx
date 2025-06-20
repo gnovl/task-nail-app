@@ -120,7 +120,7 @@ const TaskItem: React.FC<TaskItemProps> = ({
     <div
       className={`bg-white shadow-md rounded-lg overflow-hidden transition-colors duration-200 ${
         viewMode === "grid"
-          ? "flex flex-col p-4 pt-8"
+          ? "flex flex-col p-4 pt-10" // Increased top padding for better spacing
           : "flex flex-row p-2.5 pr-1.5 items-center"
       } relative group ${
         isSelected
@@ -130,102 +130,108 @@ const TaskItem: React.FC<TaskItemProps> = ({
           : "hover:bg-gray-100"
       }`}
     >
-      {/* Overdue Indicator for Grid View */}
-      {isOverdue && !selectionMode && viewMode === "grid" && (
-        <div className="absolute top-2 left-2 flex items-center text-xs text-red-600 font-medium">
-          <ExclamationCircleIcon className="w-3.5 h-3.5 mr-1" />
-          Overdue
-        </div>
-      )}
-
-      {/* Complete button (left side) for Grid view */}
-      {viewMode === "grid" && !selectionMode && !isOverdue && (
-        <div className="absolute top-2 left-2 flex items-center">
-          <button
-            onClick={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              handleCompleteTask(task.id, task.status !== "Completed");
-            }}
-            className={`p-1 rounded transition-colors shadow-sm ${
-              task.status === "Completed"
-                ? "bg-green-100 text-green-500 hover:bg-green-200 group-hover:shadow"
-                : "bg-gray-100 text-gray-400 hover:bg-green-100 hover:text-green-500 group-hover:shadow"
-            }`}
-            title={
-              task.status === "Completed"
-                ? "Mark as incomplete"
-                : "Mark as complete"
-            }
-          >
-            <CheckIcon className="w-3 h-3" />
-          </button>
-
-          {/* Move the priority flag next to the complete button */}
-          <div className="ml-2 flex items-center">
-            <FlagIcon
-              className={`w-5 h-5 ${getPriorityFlagColor(task.priority)} ${
-                currentSort === "priority" ? "animate-pulse" : ""
-              }`}
-              title={`Priority: ${task.priority || "None"}`}
-            />
-            <span
-              className={`ml-1 text-xs font-medium text-gray-500 ${getPriorityStyles()}`}
-            >
-              {task.priority || "No priority"}
-            </span>
-          </div>
-        </div>
-      )}
-
-      {/* Top right controls - Only for Grid view */}
+      {/* Grid View Top Elements */}
       {viewMode === "grid" && (
-        <div className="absolute top-2 right-2 flex items-center space-x-2">
-          {selectionMode ? (
-            <input
-              type="checkbox"
-              checked={isSelected}
-              onChange={() => toggleTaskSelection(task.id)}
-              className="w-5 h-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-            />
-          ) : (
-            <>
+        <>
+          {/* Complete Button - Top Left */}
+          {!selectionMode && (
+            <div className="absolute top-2 left-2 z-10">
               <button
                 onClick={(e) => {
                   e.preventDefault();
                   e.stopPropagation();
-                  handlePinTask(task.id);
+                  handleCompleteTask(task.id, task.status !== "Completed");
                 }}
-                className={`p-1.5 rounded-md transition-colors group visible ${
-                  task.pinned
-                    ? "text-blue-500 hover:text-blue-600"
-                    : "text-gray-400 hover:text-gray-600"
+                className={`p-1.5 rounded-md transition-colors shadow-sm ${
+                  task.status === "Completed"
+                    ? "bg-green-100 text-green-500 hover:bg-green-200"
+                    : "bg-gray-100 text-gray-400 hover:bg-green-100 hover:text-green-500"
                 }`}
-                title={task.pinned ? "Unpin task" : "Pin task"}
+                title={
+                  task.status === "Completed"
+                    ? "Mark as incomplete"
+                    : "Mark as complete"
+                }
               >
-                <Pin
-                  className={`w-4 h-4 transition-transform ${
-                    task.pinned ? "rotate-45" : ""
-                  } ${currentSort === "pinned" ? "text-blue-600" : ""}`}
-                />
+                <CheckIcon className="w-4 h-4" />
               </button>
-              <button
-                onClick={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  handleDeleteTask(task.id);
-                }}
-                className="p-1.5 text-gray-400 hover:text-gray-600 rounded-md transition-colors"
-                title="Delete task"
-              >
-                <TrashIcon className="w-4 h-4" />
-              </button>
-            </>
+            </div>
           )}
-        </div>
+
+          {/* Priority and Overdue Indicators Container - Positioned as a flex row */}
+          {!selectionMode && (
+            <div className="absolute top-2 left-12 flex items-center gap-2 z-10">
+              {/* Priority Flag */}
+              <div className="flex items-center text-xs text-gray-600 font-medium bg-gray-50 px-2 py-1 rounded-md">
+                <FlagIcon
+                  className={`w-3.5 h-3.5 mr-1 ${getPriorityFlagColor(
+                    task.priority
+                  )} ${currentSort === "priority" ? "animate-pulse" : ""}`}
+                  title={`Priority: ${task.priority || "None"}`}
+                />
+                <span className={`font-medium ${getPriorityStyles()}`}>
+                  {task.priority || "None"}
+                </span>
+              </div>
+
+              {/* Overdue Indicator - Only show if task is overdue */}
+              {isOverdue && (
+                <div className="flex items-center text-xs text-red-600 font-medium bg-red-50 px-2 py-1 rounded-md">
+                  <ExclamationCircleIcon className="w-3.5 h-3.5 mr-1" />
+                  Overdue
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Top Right Controls */}
+          <div className="absolute top-2 right-2 flex items-center space-x-1 z-10">
+            {selectionMode ? (
+              <input
+                type="checkbox"
+                checked={isSelected}
+                onChange={() => toggleTaskSelection(task.id)}
+                className="w-5 h-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+              />
+            ) : (
+              <>
+                <button
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    handlePinTask(task.id);
+                  }}
+                  className={`p-1.5 rounded-md transition-colors ${
+                    task.pinned
+                      ? "text-blue-500 hover:text-blue-600 bg-blue-50"
+                      : "text-gray-400 hover:text-gray-600 hover:bg-gray-100"
+                  }`}
+                  title={task.pinned ? "Unpin task" : "Pin task"}
+                >
+                  <Pin
+                    className={`w-4 h-4 transition-transform ${
+                      task.pinned ? "rotate-45" : ""
+                    } ${currentSort === "pinned" ? "text-blue-600" : ""}`}
+                  />
+                </button>
+                <button
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    handleDeleteTask(task.id);
+                  }}
+                  className="p-1.5 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-md transition-colors"
+                  title="Delete task"
+                >
+                  <TrashIcon className="w-4 h-4" />
+                </button>
+              </>
+            )}
+          </div>
+        </>
       )}
 
-      {/* Priority flag or overdue indicator for list view */}
+      {/* List View Left Elements */}
       {viewMode === "list" && (
         <div className="flex-shrink-0 mr-3 flex items-center">
           {selectionMode ? (
@@ -354,7 +360,7 @@ const TaskItem: React.FC<TaskItemProps> = ({
             /* Grid view content when in selection mode */
             <div className="cursor-pointer">
               <div
-                className={`text-sm font-medium text-gray-900 mb-2 mt-4 truncate ${getTitleStyles()}`}
+                className={`text-sm font-medium text-gray-900 mb-2 truncate ${getTitleStyles()}`}
                 title={task.title}
               >
                 {task.title}
@@ -503,7 +509,7 @@ const TaskItem: React.FC<TaskItemProps> = ({
               /* Grid view content when not in selection mode */
               <div>
                 <div
-                  className={`text-sm font-medium text-gray-900 mb-2 mt-4 truncate ${getTitleStyles()}`}
+                  className={`text-sm font-medium text-gray-900 mb-2 truncate ${getTitleStyles()}`}
                   title={task.title}
                 >
                   {task.title}

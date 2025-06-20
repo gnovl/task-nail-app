@@ -1,25 +1,15 @@
+// src/app/privacy/page.tsx
 "use client";
 
 import React from "react";
-import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
+import AuthPageHeader from "../_components/AuthPageHeader";
+import AuthPageFooter from "../_components/AuthPageFooter";
 
 export default function Privacy() {
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
       {/* Header */}
-      <header className="w-full py-4 px-4 sm:px-6 lg:px-8 bg-white border-b border-gray-200">
-        <div className="max-w-7xl mx-auto flex justify-between items-center">
-          <Link
-            href="/"
-            className="flex items-center text-gray-700 hover:text-gray-900"
-          >
-            <ArrowLeft className="w-5 h-5 mr-2" />
-            <span className="font-medium">Back to Home</span>
-          </Link>
-          <h1 className="text-xl font-bold text-gray-900">TaskNail</h1>
-        </div>
-      </header>
+      <AuthPageHeader showBackToHome={true} backToHomeText="Back to Home" />
 
       {/* Main content */}
       <main className="flex-grow py-8 px-4 sm:px-6">
@@ -84,7 +74,42 @@ export default function Privacy() {
 
             <section>
               <h2 className="text-xl font-semibold text-gray-800 mb-3">
-                5. Contact
+                5. Cookies and Tracking
+              </h2>
+              <p className="text-gray-600">
+                We use essential cookies to ensure our website works properly
+                and analytics cookies to understand how you interact with our
+                site. You can control cookie preferences through our cookie
+                notice.
+              </p>
+            </section>
+
+            <section>
+              <h2 className="text-xl font-semibold text-gray-800 mb-3">
+                6. Third-Party Services
+              </h2>
+              <p className="text-gray-600">
+                We use reCAPTCHA for security verification, which is subject to
+                Google's Privacy Policy and Terms of Service. We may also use
+                other third-party services to improve our application
+                functionality.
+              </p>
+            </section>
+
+            <section>
+              <h2 className="text-xl font-semibold text-gray-800 mb-3">
+                7. Your Rights
+              </h2>
+              <p className="text-gray-600">
+                You have the right to access, update, or delete your personal
+                data. You can manage your account settings through the
+                application or contact us for assistance with data requests.
+              </p>
+            </section>
+
+            <section>
+              <h2 className="text-xl font-semibold text-gray-800 mb-3">
+                8. Contact
               </h2>
               <p className="text-gray-600">
                 If you have any questions about this privacy policy or our data
@@ -104,23 +129,19 @@ export default function Privacy() {
 
           <div className="mt-8 pt-4 border-t border-gray-200">
             <p className="text-sm text-gray-500">
-              Last updated: March 31, 2025
+              Last updated:{" "}
+              {new Date().toLocaleDateString("en-US", {
+                year: "numeric",
+                month: "long",
+                day: "numeric",
+              })}
             </p>
           </div>
         </div>
       </main>
 
       {/* Footer */}
-      <footer className="w-full py-4 px-4 bg-white border-t border-gray-100">
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center">
-          <div className="mb-2 md:mb-0 text-center md:text-left">
-            <p className="text-sm font-medium text-gray-900">TaskNail</p>
-            <p className="text-xs text-gray-500">
-              © 2025 TaskNail. All rights reserved.
-            </p>
-          </div>
-        </div>
-      </footer>
+      <AuthPageFooter />
     </div>
   );
 }

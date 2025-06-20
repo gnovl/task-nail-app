@@ -125,3 +125,12 @@ body {
 .task-indicator:hover {
   transform: scale(1.2);
 }
+
+/* Hide reCAPTCHA badge except during authentication flows */
+/* Show badge when: login/register pages are loaded OR auth modals are open */
+body:not(.login-page):not(.register-page):not(.auth-modal-open)
+  .grecaptcha-badge {
+  opacity: 0 !important;
+  pointer-events: none !important;
+  transition: opacity 0.3s ease !important;
+}

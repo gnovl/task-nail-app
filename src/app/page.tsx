@@ -12,6 +12,7 @@ import {
   ArrowTrendingUpIcon,
   ArrowRightIcon,
 } from "@heroicons/react/24/outline";
+import CookiesNotice from "./_components/CookiesNotice";
 
 // Core features to highlight
 const features = [
@@ -41,17 +42,29 @@ export default function Home() {
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const [isRegisterModalOpen, setIsRegisterModalOpen] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
+  const [showRegistrationSuccess, setShowRegistrationSuccess] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
   const router = useRouter();
 
-  // Fix hydration issues by setting mounted state after initial render
+  // Fix hydration issues by properly handling mounted state
   useEffect(() => {
     setIsMounted(true);
+
+    // Check if it's mobile after component mounts to avoid hydration mismatch
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+
+    return () => window.removeEventListener("resize", checkMobile);
   }, []);
 
   const handleGetStarted = () => {
     if (!isMounted) return;
 
-    if (window.innerWidth < 768) {
+    if (isMobile) {
       router.push("/login");
     } else {
       setIsLoginModalOpen(true);
@@ -61,7 +74,7 @@ export default function Home() {
   const handleRegister = () => {
     if (!isMounted) return;
 
-    if (window.innerWidth < 768) {
+    if (isMobile) {
       router.push("/register");
     } else {
       setIsRegisterModalOpen(true);
@@ -70,6 +83,7 @@ export default function Home() {
 
   const switchToLogin = () => {
     setIsRegisterModalOpen(false);
+    setShowRegistrationSuccess(true);
     setIsLoginModalOpen(true);
   };
 
@@ -229,13 +243,17 @@ export default function Home() {
         </div>
       </footer>
 
-      {/* Only render modals client-side after mount */}
+      {/* Render modals always after mount to prevent hydration issues */}
       {isMounted && (
         <>
           <LoginModal
             isOpen={isLoginModalOpen}
-            onClose={() => setIsLoginModalOpen(false)}
+            onClose={() => {
+              setIsLoginModalOpen(false);
+              setShowRegistrationSuccess(false); // Reset success flag when closing
+            }}
             onSwitchToRegister={switchToRegister}
+            showRegistrationSuccess={showRegistrationSuccess}
           />
           <RegisterModal
             isOpen={isRegisterModalOpen}
@@ -244,6 +262,7 @@ export default function Home() {
           />
         </>
       )}
+      {isMounted && <CookiesNotice />}
     </div>
   );
 }

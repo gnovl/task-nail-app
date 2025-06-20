@@ -1,25 +1,15 @@
+// src/app/terms/page.tsx
 "use client";
 
 import React from "react";
-import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
+import AuthPageHeader from "../_components/AuthPageHeader";
+import AuthPageFooter from "../_components/AuthPageFooter";
 
 export default function Terms() {
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
       {/* Header */}
-      <header className="w-full py-4 px-4 sm:px-6 lg:px-8 bg-white border-b border-gray-200">
-        <div className="max-w-7xl mx-auto flex justify-between items-center">
-          <Link
-            href="/"
-            className="flex items-center text-gray-700 hover:text-gray-900"
-          >
-            <ArrowLeft className="w-5 h-5 mr-2" />
-            <span className="font-medium">Back to Home</span>
-          </Link>
-          <h1 className="text-xl font-bold text-gray-900">TaskNail</h1>
-        </div>
-      </header>
+      <AuthPageHeader showBackToHome={true} backToHomeText="Back to Home" />
 
       {/* Main content */}
       <main className="flex-grow py-8 px-4 sm:px-6">
@@ -90,19 +80,53 @@ export default function Terms() {
 
             <section>
               <h2 className="text-xl font-semibold text-gray-800 mb-3">
-                6. Limitation of Liability
+                6. Service Availability
               </h2>
               <p className="text-gray-600">
-                TaskNail is provided &quot;as is&quot; without warranties of any
-                kind. In no event shall TaskNail be liable for any direct,
-                indirect, incidental, special, or consequential damages arising
-                out of or in any way connected with the use of our service.
+                While we strive to provide reliable service, TaskNail is
+                provided "as is" and we make no guarantees about uptime or
+                availability. We may need to perform maintenance or updates that
+                temporarily affect service availability.
               </p>
             </section>
 
             <section>
               <h2 className="text-xl font-semibold text-gray-800 mb-3">
-                7. Contact
+                7. Limitation of Liability
+              </h2>
+              <p className="text-gray-600">
+                TaskNail is provided "as is" without warranties of any kind. In
+                no event shall TaskNail be liable for any direct, indirect,
+                incidental, special, or consequential damages arising out of or
+                in any way connected with the use of our service.
+              </p>
+            </section>
+
+            <section>
+              <h2 className="text-xl font-semibold text-gray-800 mb-3">
+                8. Termination
+              </h2>
+              <p className="text-gray-600">
+                You may terminate your account at any time through the account
+                settings. We reserve the right to suspend or terminate accounts
+                that violate these terms or engage in harmful activities.
+              </p>
+            </section>
+
+            <section>
+              <h2 className="text-xl font-semibold text-gray-800 mb-3">
+                9. Changes to Terms
+              </h2>
+              <p className="text-gray-600">
+                We may update these Terms of Service from time to time. We will
+                notify users of any significant changes and the updated terms
+                will be effective upon posting to this page.
+              </p>
+            </section>
+
+            <section>
+              <h2 className="text-xl font-semibold text-gray-800 mb-3">
+                10. Contact
               </h2>
               <p className="text-gray-600">
                 If you have any questions about these Terms of Service, please
@@ -122,23 +146,19 @@ export default function Terms() {
 
           <div className="mt-8 pt-4 border-t border-gray-200">
             <p className="text-sm text-gray-500">
-              Last updated: March 31, 2025
+              Last updated:{" "}
+              {new Date().toLocaleDateString("en-US", {
+                year: "numeric",
+                month: "long",
+                day: "numeric",
+              })}
             </p>
           </div>
         </div>
       </main>
 
       {/* Footer */}
-      <footer className="w-full py-4 px-4 bg-white border-t border-gray-100">
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center">
-          <div className="mb-2 md:mb-0 text-center md:text-left">
-            <p className="text-sm font-medium text-gray-900">TaskNail</p>
-            <p className="text-xs text-gray-500">
-              © 2025 TaskNail. All rights reserved.
-            </p>
-          </div>
-        </div>
-      </footer>
+      <AuthPageFooter />
     </div>
   );
 }
