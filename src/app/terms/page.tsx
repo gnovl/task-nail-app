@@ -84,9 +84,9 @@ export default function Terms() {
               </h2>
               <p className="text-gray-600">
                 While we strive to provide reliable service, TaskNail is
-                provided "as is" and we make no guarantees about uptime or
-                availability. We may need to perform maintenance or updates that
-                temporarily affect service availability.
+                provided &quot;as is&quot; and we make no guarantees about
+                uptime or availability. We may need to perform maintenance or
+                updates that temporarily affect service availability.
               </p>
             </section>
 

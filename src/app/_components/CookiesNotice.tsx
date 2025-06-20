@@ -48,7 +48,8 @@ export default function CookiesNotice() {
             <p className="text-sm text-gray-700 leading-relaxed">
               We use essential cookies to ensure our website works properly and
               analytics cookies to understand how you interact with our site. By
-              clicking "Accept All", you consent to our use of cookies.{" "}
+              clicking &quot;Accept All&quot;, you consent to our use of
+              cookies.{" "}
               <Link
                 href="/privacy"
                 className="text-black underline hover:no-underline"

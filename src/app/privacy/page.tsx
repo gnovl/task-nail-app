@@ -90,8 +90,8 @@ export default function Privacy() {
               </h2>
               <p className="text-gray-600">
                 We use reCAPTCHA for security verification, which is subject to
-                Google's Privacy Policy and Terms of Service. We may also use
-                other third-party services to improve our application
+                Google&apos;s Privacy Policy and Terms of Service. We may also
+                use other third-party services to improve our application
                 functionality.
               </p>
             </section>

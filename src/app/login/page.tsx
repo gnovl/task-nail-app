@@ -251,9 +251,9 @@ function LoginForm() {
                     <div className="ml-3">
                       <p className="font-medium">Enhanced Security Active</p>
                       <p className="text-xs mt-1">
-                        Due to multiple login attempts, we're using additional
-                        security verification. This happens automatically in the
-                        background.
+                        Due to multiple login attempts, we&apos;re using
+                        additional security verification. This happens
+                        automatically in the background.
                       </p>
                     </div>
                   </div>
