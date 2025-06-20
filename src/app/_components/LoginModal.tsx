@@ -200,7 +200,7 @@ export default function LoginModal({
     return (
       isLoading ||
       isVerifyingRecaptcha ||
-      (showRecaptcha && RECAPTCHA_SITE_KEY && !recaptchaLoaded)
+      (showRecaptcha && Boolean(RECAPTCHA_SITE_KEY) && !recaptchaLoaded)
     );
   };
 
