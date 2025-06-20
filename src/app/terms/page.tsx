@@ -95,10 +95,10 @@ export default function Terms() {
                 7. Limitation of Liability
               </h2>
               <p className="text-gray-600">
-                TaskNail is provided "as is" without warranties of any kind. In
-                no event shall TaskNail be liable for any direct, indirect,
-                incidental, special, or consequential damages arising out of or
-                in any way connected with the use of our service.
+                TaskNail is provided &quot;as is&quot; without warranties of any
+                kind. In no event shall TaskNail be liable for any direct,
+                indirect, incidental, special, or consequential damages arising
+                out of or in any way connected with the use of our service.
               </p>
             </section>
 
